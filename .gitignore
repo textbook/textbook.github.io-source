@@ -1,0 +1,7 @@
+# The output directory is a separate repo
+output/
+
+# Python stuff
+*.py[cod]
+__pycache__/
+
