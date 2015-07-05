@@ -34,6 +34,8 @@ SOCIAL = (
     ('Another social link', '#'),
 )
 
+GITHUB_URL = 'https://github.com/textbook/textbook.github.io-source'
+
 STATIC_PATHS = [
 	'images', 
 	# 'extra/robots.txt', 
