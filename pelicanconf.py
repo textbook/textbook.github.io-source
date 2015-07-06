@@ -2,17 +2,18 @@
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
 
+# Base configuration
 AUTHOR = 'Jonathan Sharpe'
 SITENAME = 'textbook'
 SITEURL = ''
-
 PATH = 'content'
-
 TIMEZONE = 'Europe/London'
-
 DEFAULT_LANG = 'en'
 
+# Appearance
 THEME = 'starling'
+TYPOGRIFY = True
+#CSS_FILE = 'wide.css'
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -35,10 +36,13 @@ SOCIAL = (
     ('Twitter', 'https://twitter.com/jonrsharpe'),
 )
 
+# Other settings
 DISQUS_SITENAME = 'textbook-dev'
 GITHUB_URL = 'https://github.com/textbook/textbook.github.io-source'
 GOOGLE_ANALYTICS = 'UA-64837080-1'
+TWITTER_USERNAME = 'jonrsharpe'
 
+# Static files
 STATIC_PATHS = [
 	'images', 
 	'extra/robots.txt', 
@@ -51,7 +55,12 @@ EXTRA_PATH_METADATA = {
 
 DEFAULT_PAGINATION = 10
 
+# URL settings
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True
-
-TYPOGRIFY = True
+ARTICLE_SAVE_AS = '{date:%Y}/{date:%b}/{date:%d}/{slug}.html'
+ARTICLE_URL = '{date:%Y}/{date:%b}/{date:%d}/{slug}.html'
+# Don't need the author pages
+AUTHOR_SAVE_AS = ''
+AUTHOR_URL = ''
+YEAR_ARCHIVE_SAVE_AS = '{date:%Y}/index.html'
