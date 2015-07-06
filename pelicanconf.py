@@ -12,7 +12,7 @@ TIMEZONE = 'Europe/London'
 
 DEFAULT_LANG = 'en'
 
-THEME = 'notmyidea'
+THEME = 'starling'
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -30,19 +30,22 @@ LINKS = (
 
 # Social widget
 SOCIAL = (
-	('You can add links in your config file', '#'),
-    ('Another social link', '#'),
+	('GitHub', 'https://github.com/textbook'),
+    ('Stack Overflow', 'http://stackoverflow.com/users/3001761/jonrsharpe'),
+    ('Twitter', 'https://twitter.com/jonrsharpe'),
 )
 
+DISQUS_SITENAME = 'textbook-dev'
 GITHUB_URL = 'https://github.com/textbook/textbook.github.io-source'
+GOOGLE_ANALYTICS = 'UA-64837080-1'
 
 STATIC_PATHS = [
 	'images', 
-	# 'extra/robots.txt', 
+	'extra/robots.txt', 
 	'extra/favicon.ico'
 ]
 EXTRA_PATH_METADATA = {
-    #'extra/robots.txt': {'path': 'robots.txt'},
+    'extra/robots.txt': {'path': 'robots.txt'},
     'extra/favicon.ico': {'path': 'favicon.ico'}
 }
 
@@ -50,3 +53,5 @@ DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True
+
+TYPOGRIFY = True
