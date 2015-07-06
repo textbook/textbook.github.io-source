@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 # Base configuration
 AUTHOR = 'Jonathan Sharpe'
 SITENAME = 'textbook'
-SITEURL = ''
+SITEURL = 'http://textbook.github.io'
 PATH = 'content'
 TIMEZONE = 'Europe/London'
 DEFAULT_LANG = 'en'
