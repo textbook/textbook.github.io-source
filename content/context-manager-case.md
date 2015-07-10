@@ -1,6 +1,6 @@
 Title: A context manager-based case statement
 Date: 2015-07-07 20:20
-Category: Python
+Category: Code
 Tags: development, python
 Slug: context-manager-case
 Authors: Jonathan Sharpe
@@ -9,7 +9,7 @@ Summary: This is my first test post.
 I wanted to have a post with some code in, for testing purposes, so here is a little
 something I put together based on [this Programmers.SE question][1]. `Switch` (ab?)uses
 Python's context manager `with` statement syntax to implement a rough approximation
-of the `switch` available in some other languages. 
+of the `switch` available in some other languages.
 
 	class Switch(object):
 		"""A class for faking switch syntax with a context manager.
@@ -42,19 +42,19 @@ of the `switch` available in some other languages.
 			more than four
 
 		"""
- 
+
 		def __init__(self, value):
 			"""Create a new Switch instance."""
 			self.value = value
- 
+
 		def __call__(self, *cases):
 			"""Do any of the supplied cases match the stored value?"""
 			return any(case == self.value for case in cases)
- 
+
 		def __enter__(self):
 			"""Enter the context manager."""
 			return self
- 
+
 		def __exit__(self, typ, value, traceback):
 			"""Don't do anything when leaving the context manager."""
 			pass

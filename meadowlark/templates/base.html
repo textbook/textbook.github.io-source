@@ -34,15 +34,17 @@
     <section id="extras" class="body">
       {% if PAGES %}
         <div class="pages">
-          <h2>other pages</h2>
-          {% for pg in PAGES %}
-            <li{% if pg == page %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ pg.url }}"><i class="fa fa-book fa-fw"></i> {{ pg.title }}</a></li>
-          {% endfor %}
+          <h3>other pages</h3>
+          <ul>
+            {% for pg in PAGES %}
+              <li{% if pg == page %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ pg.url }}"><i class="fa fa-book fa-fw"></i> {{ pg.title }}</a></li>
+            {% endfor %}
+          </ul>
         </div>
       {% endif %}
       {% if LINKS %}
         <div class="blogroll">
-          <h2>blogroll</h2>
+          <h3>blogroll</h3>
           <ul>
             {% for name, link in LINKS %}
               <li><a href="{{ link }}"><i class="fa fa-globe fa-fw"></i> {{ name }}</a></li>
@@ -52,7 +54,7 @@
       {% endif %}
       {% if SOCIAL or FEED_ALL_ATOM or FEED_ALL_RSS %}
         <div class="social">
-          <h2>social</h2>
+          <h3>social</h3>
           <ul>
             {% if FEED_ALL_ATOM %}
               <li><a href="{{ FEED_DOMAIN }}/{{ FEED_ALL_ATOM }}" type="application/atom+xml" rel="alternate"><i class="fa fa-rss fa-fw"></i> atom feed</a></li>
@@ -83,16 +85,5 @@
     {% block content %}
     {% endblock %}
 
-    <footer id="contentinfo" class="body">
-      <address id="about" class="vcard body">
-        Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which
-        takes great advantage of <a href="http://python.org">Python</a>.
-      </address><!-- /#about -->
-
-      <p>
-        The theme is based on <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">
-        Smashing Magazine's</a> <code>notmyidea</code> theme and inspired by <a href="http://www.camposanto.com/">Campo Santo</a>.
-      </p>
-    </footer><!-- /#contentinfo -->
   </body>
 </html>
