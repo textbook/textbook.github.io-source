@@ -5,13 +5,15 @@ from __future__ import unicode_literals
 # Base configuration
 AUTHOR = 'Jonathan Sharpe'
 SITENAME = 'textbook'
-SITEURL = 'http://textbook.github.io'
+SITESUBTITLE = "These are my opinions; if you don't like them, I have others."
+#SITEURL = 'http://textbook.github.io'
+SITEURL = ''
 PATH = 'content'
 TIMEZONE = 'Europe/London'
 DEFAULT_LANG = 'en'
 
 # Appearance
-THEME = 'starling'
+THEME = 'meadowlark'
 TYPOGRIFY = True
 #CSS_FILE = 'wide.css'
 
@@ -44,8 +46,8 @@ TWITTER_USERNAME = 'jonrsharpe'
 
 # Static files
 STATIC_PATHS = [
-	'images', 
-	'extra/robots.txt', 
+	'images',
+	'extra/robots.txt',
 	'extra/favicon.ico'
 ]
 EXTRA_PATH_METADATA = {

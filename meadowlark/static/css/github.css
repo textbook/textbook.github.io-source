@@ -1,0 +1,52 @@
+/*!
+ * Based on "Fork me on GitHub" CSS ribbon v0.1.1
+ * Relaased under the MIT License
+ * https://github.com/simonwhitaker/github-fork-ribbon-css
+ *
+ * Modified: flat, top-right-only and using a closer font:
+ * Collegiate by Keith Bates, keith@k-type.com
+*/
+
+/* imports */
+@font-face {
+  font-family: "Collegiate";
+  src: url("COLLEGIA.ttf");
+}
+
+.github-fork-ribbon {
+  background-color: #007200;
+  font-family: "Collegiate", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  padding: 2px 0;
+  pointer-events: auto;
+  position: absolute;
+  right: -70px;
+  text-align: center;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+  top: 40px;
+}
+
+.github-fork-ribbon a,
+.github-fork-ribbon a:hover {
+  color: #eaeae8;
+  display: inline-block;
+  text-decoration: none;
+  width: 250px;
+
+  /* Add "stitching" effect */
+  border-width: 1px 0;
+  border-style: dotted;
+  border-color: #eaeae8;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.github-fork-ribbon-wrapper {
+  width: 150px;
+  height: 150px;
+  pointer-events: none;
+  position: absolute;
+  overflow: hidden;
+  right: 0;
+  z-index: 9999;
+}
