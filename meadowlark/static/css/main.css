@@ -1,8 +1,8 @@
 /* Imports */
+@import url("article.css");
 @import url("github.css");
 @import url("pygment.css");
 @import url("reset.css");
-
 
 /***** Global *****/
 /* Body */
@@ -17,15 +17,10 @@ body {
   text-align: left;
 }
 
-code {
-  font-family: 'Inconsolata', 'Courier', monospace;
-}
+code { font-family: 'Inconsolata', 'Courier', monospace; }
 
 /* HTML5 tags */
-header, hgroup, section, footer,
-aside, nav, article, figure {
-  display: block;
-}
+header, hgroup, section, footer, aside, nav, article, figure { display: block; }
 
 /* Headings */
 h1 {font-size: 2em }
@@ -36,40 +31,54 @@ h5 {font-size: 1.143em}	/* 16px */
 h6 {font-size: 1em}		/* 14px */
 
 /* Article */
-article {
-  float: left;
-  font-family: Georgia;
-  padding: 10px;
-}
-
-article .highlight {
-  padding: 25px;
+#content {
+  max-width: 800px;
+  padding: 0px 50px;
 }
 
 /* Extras */
 #extras {
-  position: fixed;
-  right: 0px;
-  top: 200px;
-  width: 175px;
+  float: right;
+  margin: 0px 25px;
+  width: 200px;
 }
 
 #extras h2 {
   border-color: #444;
   border-top-style: dotted;
   border-width: 1px;
+  padding-top: 10px;
+  text-transform: capitalize;
 }
+
+#extras a {
+  color: #444;
+  display: inline-block;
+  margin: 5px 10px;
+  padding: 5px;
+  text-decoration: none;
+  width: 170px;
+}
+
+#extras a:hover {
+  background-color: #007200;
+  color: #eaeae8;
+}
+
+#extras li:last-child { margin-bottom: 10px; }
 
 /* Navigation bar */
 #banner {
 	background-color: #007200;
   color: #eaeae8;
+  margin-bottom: 75px;
 }
 
 #banner a {
   color: #eaeae8;
   text-decoration: none;
 }
+
 #banner nav {
 	background-color: #444;
 	display: inline-block;
@@ -81,7 +90,11 @@ article .highlight {
   color: #007200;
 }
 
-#banner nav ul { list-style: none; margin: 0 auto; }
+#banner nav ul {
+  list-style: none;
+  margin: 0 auto;
+}
+
 #banner nav li a {
   display: inline-block;
 	float: right;
@@ -99,6 +112,7 @@ article .highlight {
 }
 
 #banner .active a { background-color: #007200; }
+
 #banner .active a:hover { background-color: #eaeae8; }
 
 #banner .active-title a {
@@ -108,20 +122,25 @@ article .highlight {
   line-height: 1em;
   text-transform: lowercase;
 }
-#banner .active-title a:hover { background-color: #eaeae8; }
 
-#banner .subtitle {
+#banner .active-title a:hover { color: #eaeae8; }
+
+#subtitle {
   float: left;
   font-family: Georgia, "Times New Roman", Times, serif;
   padding: 10px;
+}
+
+@media only screen and (max-width: 960px) {
+	.collapse {
+		display: none;
+	}
 }
 
 /* Page footer */
 #contentinfo {
   background-color: #444;
   color: #aeaea8;
-  bottom: 0;
-  position: fixed;
   text-align: center;
   width: 100%;
 }
