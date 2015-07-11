@@ -27,13 +27,14 @@ AUTHOR_FEED_RSS = None
 
 # Blogroll
 LINKS = (
-	('Pelican', 'http://getpelican.com/'),
-	('Python.org', 'http://python.org/'),
-	('Jinja2', 'http://jinja.pocoo.org/'),
+	('Atom IDE', 'http://blog.atom.io/'),
+	('Campo Santo', 'http://blog.camposanto.com/'),
+	('Code as Craft', 'https://codeascraft.com/'),
 )
 
 # Social widget
 SOCIAL = (
+	('BitBucket', 'https://bitbucket.org/jonrsharpe'),
 	('GitHub', 'https://github.com/textbook'),
     ('Stack Overflow', 'http://stackoverflow.com/users/3001761/jonrsharpe'),
     ('Twitter', 'https://twitter.com/jonrsharpe'),
@@ -56,7 +57,7 @@ EXTRA_PATH_METADATA = {
     'extra/favicon.ico': {'path': 'favicon.ico'}
 }
 
-DEFAULT_PAGINATION = 10
+DEFAULT_PAGINATION = 4
 
 # URL settings
 # Uncomment following line if you want document-relative URLs when developing

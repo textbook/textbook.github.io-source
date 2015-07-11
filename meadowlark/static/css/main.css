@@ -1,7 +1,7 @@
 /* Imports */
 @import url("reset.css");
 
-@import url("article.css");
+@import url("content.css");
 @import url("github.css");
 @import url("pygment.css");
 
@@ -122,9 +122,10 @@ img.desaturate {
 #banner nav li a {
   display: inline-block;
 	float: right;
+  font-family: 'Futura', 'Helvetica Neue', Verdana, Arial, sans-serif;
   font-weight: bold;
 	margin: 0;
-	padding: 10px;
+	padding: 10px 15px;
 	text-transform: uppercase;
 }
 
@@ -132,6 +133,7 @@ img.desaturate {
   float: left;
   font-size: 1.429em;  /* 20pt */
   line-height: 1em;
+  font-family: 'Helvetica Neue', Verdana, Arial, sans-serif;
   text-transform: lowercase;
 }
 
@@ -142,8 +144,9 @@ img.desaturate {
 #banner .active-title a {
   background-color: rgb(17, 105, 50);
   float: left;
-  font-size: 1.429em;  /* 20pt */
+  font-size: 1.429em;
   line-height: 1em;
+  font-family: 'Helvetica Neue', Verdana, Arial, sans-serif;
   text-transform: lowercase;
 }
 
@@ -160,6 +163,6 @@ img.desaturate {
   font-family: 'Futura', sans-serif;
   left: 15px;
   position: absolute;
-  text-transform: uppercase;
+  /*text-transform: uppercase;*/
   width: 500px;
 }

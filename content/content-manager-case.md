@@ -1,15 +1,17 @@
 Title: A context manager-based case statement
-Date: 2015-07-07 20:20
+Date: 2015-07-06 12:00
 Category: Development
-Tags: development, python
+Tags: code, python
 Slug: context-manager-case
 Authors: Jonathan Sharpe
-Summary: This is my first test post.
+Summary: Use of Python's context manager syntax to ape a switch-case statement.
 
 I wanted to have a post with some code in, for testing purposes, so here is a little
 something I put together based on [this Programmers.SE question][1]. `Switch` (ab?)uses
 Python's context manager `with` statement syntax to implement a rough approximation
 of the `switch` available in some other languages.
+
+Also available [as a Gist][2].
 
 	:::python
 	class Switch(object):
@@ -59,8 +61,6 @@ of the `switch` available in some other languages.
 		def __exit__(self, typ, value, traceback):
 			"""Don't do anything when leaving the context manager."""
 			pass
-
-Also available [as a Gist][2].
 
   [1]: http://programmers.stackexchange.com/questions/287218/i-wrote-a-python-switch-statement
   [2]: https://gist.github.com/textbook/5e83044f637fda1a63fe
