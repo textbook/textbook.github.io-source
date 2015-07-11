@@ -4,14 +4,17 @@ from __future__ import unicode_literals
 
 # Base configuration
 AUTHOR = 'Jonathan Sharpe'
+AVATAR = 'avatar.jpg'
 SITENAME = 'textbook'
-SITEURL = 'http://textbook.github.io'
+SITESUBTITLE = "These are my opinions - if you don't like them, I have others"
+#SITEURL = 'http://textbook.github.io'
+SITEURL = ''
 PATH = 'content'
 TIMEZONE = 'Europe/London'
 DEFAULT_LANG = 'en'
 
 # Appearance
-THEME = 'starling'
+THEME = 'meadowlark'
 TYPOGRIFY = True
 #CSS_FILE = 'wide.css'
 
@@ -24,13 +27,14 @@ AUTHOR_FEED_RSS = None
 
 # Blogroll
 LINKS = (
-	('Pelican', 'http://getpelican.com/'),
-	('Python.org', 'http://python.org/'),
-	('Jinja2', 'http://jinja.pocoo.org/'),
+	('Atom IDE', 'http://blog.atom.io/'),
+	('Campo Santo', 'http://blog.camposanto.com/'),
+	('Code as Craft', 'https://codeascraft.com/'),
 )
 
 # Social widget
 SOCIAL = (
+	('BitBucket', 'https://bitbucket.org/jonrsharpe'),
 	('GitHub', 'https://github.com/textbook'),
     ('Stack Overflow', 'http://stackoverflow.com/users/3001761/jonrsharpe'),
     ('Twitter', 'https://twitter.com/jonrsharpe'),
@@ -44,8 +48,8 @@ TWITTER_USERNAME = 'jonrsharpe'
 
 # Static files
 STATIC_PATHS = [
-	'images', 
-	'extra/robots.txt', 
+	'images',
+	'extra/robots.txt',
 	'extra/favicon.ico'
 ]
 EXTRA_PATH_METADATA = {
@@ -53,7 +57,7 @@ EXTRA_PATH_METADATA = {
     'extra/favicon.ico': {'path': 'favicon.ico'}
 }
 
-DEFAULT_PAGINATION = 10
+DEFAULT_PAGINATION = 4
 
 # URL settings
 # Uncomment following line if you want document-relative URLs when developing

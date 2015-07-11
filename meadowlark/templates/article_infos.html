@@ -1,0 +1,27 @@
+<footer class="post-info">
+        <abbr class="published" title="{{ article.date.isoformat() }}">
+                published: {{ article.locale_date }}
+        </abbr>
+        {% if article.modified %}
+		<br />
+        <abbr class="modified" title="{{ article.modified.isoformat() }}">
+                updated: {{ article.locale_modified }}
+        </abbr>
+        {% endif %}
+
+        {% if article.authors %}
+        <address class="vcard author">
+			by {% for author in article.authors %}
+				{% if author.url %}
+					<a class="url fn" href="{{ SITEURL }}/{{ author.url }}">{{ author }}</a>
+				{% else %}
+					{{ author }}
+				{% endif %}
+			{% endfor %}
+        </address>
+        {% endif %}
+<p>category: <a href="{{ SITEURL }}/{{ article.category.url }}">{{ article.category }}</a></p>
+{% include 'taglist.html' %}
+{% import 'translations.html' as translations with context %}
+{{ translations.translations_for(article) }}
+</footer><!-- /.post-info -->
