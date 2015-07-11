@@ -1,12 +1,16 @@
 h1 {
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }
+
 h1 a {
   color: #007200;
   text-decoration: none;
 }
 
-h1 a:hover { color: #444; }
+h1 a:hover {
+  border-color: #444;
+  color: #444;
+}
 
 #featured {
   max-width: 800px;
@@ -15,7 +19,7 @@ h1 a:hover { color: #444; }
 
 #featured p {
   font-family: Georgia, "Times New Roman", Times, serif;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 #featured .post-info {
@@ -31,7 +35,11 @@ h1 a:hover { color: #444; }
 
 #content p {
   font-family: Georgia, "Times New Roman", Times, serif;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+#content h2 {
+  
 }
 
 #content .post-info {

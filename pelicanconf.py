@@ -4,8 +4,9 @@ from __future__ import unicode_literals
 
 # Base configuration
 AUTHOR = 'Jonathan Sharpe'
+AVATAR = 'avatar.jpg'
 SITENAME = 'textbook'
-SITESUBTITLE = "These are my opinions; if you don't like them, I have others."
+SITESUBTITLE = "These are my opinions - if you don't like them, I have others"
 #SITEURL = 'http://textbook.github.io'
 SITEURL = ''
 PATH = 'content'

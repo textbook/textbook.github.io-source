@@ -13,8 +13,15 @@
   src: url("COLLEGIA.ttf");
 }
 
+@media only screen and (max-width: 799px) {
+  .github-fork-ribbon-wrapper {
+    left: 644px;
+    right: auto;
+  }
+}
+
 .github-fork-ribbon {
-  background-color: #007200;
+  background-color: #eaeae8;
   font-family: "Collegiate", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 18px;
   padding: 2px 0;
@@ -29,7 +36,8 @@
 
 .github-fork-ribbon a,
 .github-fork-ribbon a:hover {
-  color: #eaeae8;
+  background-color: #eaeae8;
+  color: rgb(17, 105, 50);
   display: inline-block;
   text-decoration: none;
   width: 250px;
@@ -37,8 +45,7 @@
   /* Add "stitching" effect */
   border-width: 1px 0;
   border-style: dotted;
-  border-color: #eaeae8;
-  border-color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 114, 0, 0.7);
 }
 
 .github-fork-ribbon-wrapper {
@@ -47,7 +54,7 @@
   pointer-events: none;
   position: absolute;
   overflow: hidden;
-  right: 0;
+  right: 5px;
   top: 45px;
   z-index: 9999;
 }

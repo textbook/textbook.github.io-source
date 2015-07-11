@@ -14,22 +14,29 @@
   {% include 'github.html' %}
 
   <body id="index" class="home">
-  	<header id="banner" class="body">
-  	  <nav><ul>
+    <header id="banner" class="body">
+      <nav><ul>
         <li {% if output_file == "index.html" %}class="active-title"{% else %}class="title"{% endif %}>
           <a href="{{ SITEURL }}/">{{ SITENAME }}</a>
         </li>
-        {% if SITESUBTITLE %}<li id="subtitle" class="collapse">{{ SITESUBTITLE }}</li>{% endif %}
-  	  	{% for title, link in MENUITEMS|reverse %}
-					<li><a href="{{ link }}">{{ title }}</a></li>
-				{% endfor %}
-				{% if DISPLAY_CATEGORIES_ON_MENU -%}
-					{% for cat, null in categories|reverse %}
-						<li{% if cat == category %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a></li>
-					{% endfor %}
-				{% endif %}
-  	  </ul></nav>
-  	</header>
+        {% for title, link in MENUITEMS|reverse %}
+          <li><a href="{{ link }}">{{ title }}</a></li>
+        {% endfor %}
+        {% if DISPLAY_CATEGORIES_ON_MENU -%}
+          {% for cat, null in categories|reverse %}
+            <li{% if cat == category %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a></li>
+          {% endfor %}
+        {% endif %}
+      </ul></nav>
+      <div id="banner-text" class="body">
+        {% if SITESUBTITLE %}<div id="subtitle">{{ SITESUBTITLE }}</div>{% endif %}
+        {% if AVATAR %}
+          <div id="avatar-div">
+            <img id="avatar" class="desaturate" src="{{ SITEURL }}/images/{{ AVATAR }}" alt="Site avatar"/>
+          </div>
+        {% endif %}
+      </div>
+    </header>
 
     <section id="extras" class="body">
       {% if PAGES %}

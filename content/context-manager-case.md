@@ -1,6 +1,6 @@
 Title: A context manager-based case statement
 Date: 2015-07-07 20:20
-Category: Code
+Category: Development
 Tags: development, python
 Slug: context-manager-case
 Authors: Jonathan Sharpe
@@ -11,6 +11,7 @@ something I put together based on [this Programmers.SE question][1]. `Switch` (a
 Python's context manager `with` statement syntax to implement a rough approximation
 of the `switch` available in some other languages.
 
+	:::python
 	class Switch(object):
 		"""A class for faking switch syntax with a context manager.
 
