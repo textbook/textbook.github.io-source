@@ -1,7 +1,7 @@
 Title: About
 
 This website is proudly powered by [Pelican][pel], which takes great advantage
-of [Python][py].
+of [Python][py]. It's hosted on [GitHub Pages][ghp].
 
 The theme is a custom job, but it draws heavily from Pelican's base `notmyidea`
 theme by [Smashing Magazine][sm]. Another inspiration was [Campo Santo][cs],
@@ -20,6 +20,7 @@ and use Keith Bates' [Collegiate][col] font.
   [fa]: http://fontawesome.io/
   [fw]: http://www.firewatchgame.com/
   [ghfr]: https://github.com/simonwhitaker/github-fork-ribbon-css
+  [ghp]: https://pages.github.com/
   [pel]: http://getpelican.com/
   [py]: http://python.org
   [sm]: http://www.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/

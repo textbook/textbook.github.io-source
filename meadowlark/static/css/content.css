@@ -17,7 +17,7 @@ h1 a:hover {
   padding: 0px 50px;
 }
 
-#featured p {
+.body p {
   font-family: Georgia, "Times New Roman", Times, serif;
   margin-top: 10px;
 }
@@ -31,11 +31,6 @@ h1 a:hover {
 #content {
   max-width: 800px;
   padding: 0px 50px;
-}
-
-#content p {
-  font-family: Georgia, "Times New Roman", Times, serif;
-  margin-top: 10px;
 }
 
 #content ul {
@@ -54,11 +49,6 @@ h1 a:hover {
   border-width: 1px;
   margin: 25px 0px 10px 0px;
 }
-
-/*#content .post-info {
-  float: left;
-  margin-right: 25px;
-}*/
 
 article {
   min-height: 250px;
@@ -79,14 +69,15 @@ article {
 }
 
 .post-info p {
-  font-family: 'Helvetica Neue', Verdana, Arial, sans-serif !important;
-  margin-top: 0px !important;
+  font-family: 'Helvetica Neue', Verdana, Arial, sans-serif;
+  margin-top: 0px;
 }
 
 .highlight { /* formatted code block */
   background-color: #f6f6f5;
   max-width: 450px;
   margin: 15px;
+  overflow: scroll;
   padding: 10px;
 }
 

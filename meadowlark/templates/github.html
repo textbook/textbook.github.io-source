@@ -1,6 +1,6 @@
 {% if GITHUB_URL %}
   <div class="github-fork-ribbon-wrapper">
-    <div class="github-fork-ribbon">
+    <div class="github-fork-ribbon{% if output_file == "index.html" %} gh-home{% endif %}">
       <a href="{{ GITHUB_URL }}">Fork me on GitHub</a>
     </div>
   </div>

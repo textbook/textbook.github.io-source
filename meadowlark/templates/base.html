@@ -16,25 +16,27 @@
   <body id="index" class="home">
     <header id="banner" class="body">
       <nav><ul>
-        <li {% if output_file == "index.html" %}class="active-title"{% else %}class="title"{% endif %}>
-          <a href="{{ SITEURL }}/">{{ SITENAME }}</a>
+        <li class="title{% if output_file != "index.html" %} seasonal-hover{% endif %}">
+          <a {% if output_file == "index.html" %}class="seasonal-bg"{% endif %} href="{{ SITEURL }}/">{{ SITENAME }}</a>
         </li>
         {% for title, link in MENUITEMS|reverse %}
-          <li><a href="{{ link }}">{{ title }}</a></li>
+          <li class="sans-serif seasonal-hover"><a href="{{ link }}">{{ title }}</a></li>
         {% endfor %}
         {% if DISPLAY_CATEGORIES_ON_MENU -%}
           {% for cat, null in categories|reverse %}
-            <li{% if cat == category %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a></li>
+            <li class="sans-serif bold{% if cat != category %} seasonal-hover{% endif %}">
+              <a class="{% if cat == category %} seasonal-bg{% endif %}" href="{{ SITEURL }}/{{ cat.url }}">{{ cat }}</a>
+            </li>
           {% endfor %}
         {% endif %}
       </ul></nav>
-      <div id="banner-text" class="body">
-        {% if SITESUBTITLE %}<div id="subtitle">{{ SITESUBTITLE }}</div>{% endif %}
+      <div id="banner-text" class="body {% if output_file == "index.html" %}home{% endif %}">
         {% if AVATAR %}
           <div id="avatar-div">
-            <img id="avatar" class="desaturate" src="{{ SITEURL }}/images/{{ AVATAR }}" alt="Site avatar"/>
+            <img id="avatar" class="centered circular desaturated" src="{{ SITEURL }}/images/{{ AVATAR }}" alt="Site avatar"/>
           </div>
         {% endif %}
+        {% if SITESUBTITLE %}<div class="sans-serif" id="subtitle">{{ SITESUBTITLE }}</div>{% endif %}
       </div>
     </header>
 
@@ -44,7 +46,7 @@
           <h3>other pages</h3>
           <ul>
             {% for pg in PAGES %}
-              <li{% if pg == page %} class="active"{% endif %}><a href="{{ SITEURL }}/{{ pg.url }}"><i class="fa fa-book fa-fw"></i> {{ pg.title }}</a></li>
+              <li class="seasonal-bg-hover{% if pg == page %} bold{% endif %}"><a href="{{ SITEURL }}/{{ pg.url }}"><i class="fa fa-book fa-fw"></i> {{ pg.title }}</a></li>
             {% endfor %}
           </ul>
         </div>
@@ -54,7 +56,7 @@
           <h3>blogroll</h3>
           <ul>
             {% for name, link in LINKS %}
-              <li><a href="{{ link }}"><i class="fa fa-globe fa-fw"></i> {{ name }}</a></li>
+              <li class="seasonal-bg-hover"><a href="{{ link }}"><i class="fa fa-globe fa-fw"></i> {{ name }}</a></li>
             {% endfor %}
           </ul>
         </div><!-- /.blogroll -->
@@ -64,14 +66,14 @@
           <h3>social</h3>
           <ul>
             {% if FEED_ALL_ATOM %}
-              <li><a href="{{ FEED_DOMAIN }}/{{ FEED_ALL_ATOM }}" type="application/atom+xml" rel="alternate"><i class="fa fa-rss fa-fw"></i> atom feed</a></li>
+              <li class="seasonal-bg-hover"><a href="{{ FEED_DOMAIN }}/{{ FEED_ALL_ATOM }}" type="application/atom+xml" rel="alternate"><i class="fa fa-rss fa-fw"></i> atom feed</a></li>
             {% endif %}
             {% if FEED_ALL_RSS %}
-              <li><a href="{{ FEED_DOMAIN }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate"><i class="fa fa-rss fa-fw"></i> rss feed</a></li>
+              <li class="seasonal-bg-hover"><a href="{{ FEED_DOMAIN }}/{{ FEED_ALL_RSS }}" type="application/rss+xml" rel="alternate"><i class="fa fa-rss fa-fw"></i> rss feed</a></li>
             {% endif %}
 
             {% for name, link in SOCIAL %}
-              <li><a href="{{ link }}">
+              <li class="seasonal-bg-hover"><a href="{{ link }}">
                 {% if name|lower == 'stack overflow' %}
                   <i class="fa fa-stack-overflow fa-fw"></i>
                 {% elif name|lower == 'bitbucket' %}
