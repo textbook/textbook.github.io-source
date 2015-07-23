@@ -74,7 +74,7 @@ article {
 }
 
 .highlight { /* formatted code block */
-  background-color: #f6f6f5;
+  background-color: #faf9f6;
   max-width: 450px;
   margin: 15px;
   overflow: scroll;
