@@ -6,7 +6,7 @@ Slug: polymer-and-divshot
 Authors: Jonathan Sharpe
 Summary: An adventure in modern web development; fun with Bower, Node.JS, and more.
 
-I recently acquired a new domain; having decided that jonathansharpe.me.uk was
+I recently acquired a new domain; having decided that `jonathansharpe.me.uk` was
 a little unwieldy, I decided to look around for something a little shorter,
 settling on `http://jonrshar.pe` (registered in Peru; [Nathan Barley][trashbat],
 eat your heart out). However, although I wanted it primarily for email (`mail@...`)
@@ -77,3 +77,4 @@ Polymer to their servers...
   [md]: https://www.google.com/design/spec/material-design/introduction.html
   [node.js]: https://nodejs.org/
   [polymer]: https://www.polymer-project.org/
+  [trashbat]: http://www.trashbat.co.ck/
