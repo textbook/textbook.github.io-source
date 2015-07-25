@@ -8,8 +8,8 @@ Summary: An adventure in modern web development; fun with Bower, Node.JS, and mo
 
 I recently acquired a new domain; having decided that jonathansharpe.me.uk was
 a little unwieldy, I decided to look around for something a little shorter,
-settling on `http://jonrshar.pe` (registered in Peru; Nathan Barley, eat your
-heart out). However, although I wanted it primarily for email (`mail@...`)
+settling on `http://jonrshar.pe` (registered in Peru; [Nathan Barley][trashbat],
+eat your heart out). However, although I wanted it primarily for email (`mail@...`)
 purposes, I thought it would be nice to have something up for people to look at
 if they wandered onto the domain.
 
@@ -38,7 +38,7 @@ involved I can no longer test via `file://`, so had to get Apache properly set
 up to host from `~/Sites` That meant more tinkering with config files in `vi`
 (one day I will definitely learn more shortcuts than `!q`, aka *"get me out of
 here!"*, honest...) and another list item (I really don't like relying on
-things I don't understand, but this lists getting longer faster than I can keep
+things I don't understand, but this list's getting longer faster than I can keep
 up with it!)
 
 Next I needed somewhere to host it; [Divshot] offers free static site hosting
