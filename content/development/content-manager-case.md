@@ -1,6 +1,5 @@
 Title: A context manager-based case statement
 Date: 2015-07-06 12:00
-Category: Development
 Tags: code, python
 Slug: context-manager-case
 Authors: Jonathan Sharpe
