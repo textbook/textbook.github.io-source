@@ -7,7 +7,6 @@ AUTHOR = 'Jonathan Sharpe'
 AVATAR = 'avatar.jpg'
 SITENAME = 'textbook'
 SITESUBTITLE = "These are my opinions - if you don't like them, I have others"
-SITEURL = 'http://blog.jonathansharpe.me.uk'
 PATH = 'content'
 TIMEZONE = 'Europe/London'
 DEFAULT_LANG = 'en'
@@ -15,11 +14,13 @@ DEFAULT_LANG = 'en'
 # Appearance
 THEME = 'meadowlark'
 TYPOGRIFY = True
-#CSS_FILE = 'wide.css'
+PLUGIN_PATHS = ['pelican-plugins']
+PLUGINS = ['assets']
+JINJA_EXTENSIONS = ['webassets.ext.jinja2.AssetsExtension']
 
 # Feed generation is usually not desired when developing
-FEED_ALL_ATOM = 'feeds/all.atom.xml'
-CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
+FEED_ALL_ATOM = None
+CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
@@ -40,9 +41,9 @@ SOCIAL = (
 )
 
 # Other settings
-DISQUS_SITENAME = 'textbook-dev'
+#DISQUS_SITENAME = 'textbook-dev'
 GITHUB_URL = 'https://github.com/textbook/textbook.github.io-source'
-GOOGLE_ANALYTICS = 'UA-64837080-1'
+#GOOGLE_ANALYTICS = 'UA-64837080-1'
 TWITTER_USERNAME = 'jonrsharpe'
 
 # Static files
