@@ -13,7 +13,6 @@ DEFAULT_LANG = 'en'
 
 # Appearance
 THEME = 'meadowlark'
-TYPOGRIFY = True
 PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['assets']
 JINJA_EXTENSIONS = ['webassets.ext.jinja2.AssetsExtension']
@@ -50,11 +49,13 @@ TWITTER_USERNAME = 'jonrsharpe'
 STATIC_PATHS = [
 	'images',
 	'extra/robots.txt',
-	'extra/favicon.ico'
+	'extra/favicon.ico',
+	'extra/CNAME',
 ]
 EXTRA_PATH_METADATA = {
     'extra/robots.txt': {'path': 'robots.txt'},
-    'extra/favicon.ico': {'path': 'favicon.ico'}
+    'extra/favicon.ico': {'path': 'favicon.ico'},
+    'extra/CNAME': {'path': 'CNAME'},
 }
 
 DEFAULT_PAGINATION = 4

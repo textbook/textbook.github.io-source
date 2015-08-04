@@ -18,6 +18,5 @@ FEED_ALL_ATOM = 'feeds/all.atom.xml'
 CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
 
 # Following items are often useful when publishing
-
 DISQUS_SITENAME = 'textbook-dev'
 GOOGLE_ANALYTICS = 'UA-64837080-1'
