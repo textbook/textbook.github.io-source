@@ -4,3 +4,7 @@
 [submodule "meadowlark"]
 	path = meadowlark
 	url = https://github.com/textbook/meadowlark.git
+	branch = less
+[submodule "pelican-plugins"]
+	path = pelican-plugins
+	url = https://github.com/getpelican/pelican-plugins.git
