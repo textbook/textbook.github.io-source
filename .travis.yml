@@ -1,0 +1,16 @@
+branches:
+  only:
+  - master
+python:
+- 3.4sd
+install:
+- pip install -r requirements.txt --use-mirrors
+script:
+- pelican publish
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+before_install:
+  - git submodule update --init --recursive
+after_success: bash deploy.sh
