@@ -4,7 +4,8 @@ branches:
 python:
 - 3.4sd
 install:
-- pip install -r requirements.txt --use-mirrors
+- npm install -g less
+- pip install -r requirements.txt --use-mirrors --user
 script:
 - pelican publish
 notifications:
