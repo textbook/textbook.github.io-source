@@ -1,4 +1,4 @@
-Title: Switching meadowlark to Less CSS
+Title: Switching Meadowlark to Less CSS
 Date: 2015-08-03 22:00
 Category: Meta
 Tags: code, pelican, css
@@ -8,7 +8,7 @@ Summary: In which I faff around with webassets and reduce duplication
 
 As [Atom], the primary IDE I'm using to develop and maintain this site, uses
 [Less CSS][less] in its stylesheets, I thought I'd adopt it to reduce the style
-duplication in the site's `meadowlark` theme. However, this did not turn out to
+duplication in the site's Meadowlark theme. However, this did not turn out to
 be as easy as initially anticipated, so I thought I'd write down the steps in
 case it helps someone else.
 
