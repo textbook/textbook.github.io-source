@@ -16,6 +16,6 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo -e "Changes:\n"
     git status -s
     git commit -m "Travis build $TRAVIS_BUILD_NUMBER pushed to Github Pages"
-    git push -fq origin $BRANCH > /dev/null
+    git push -fq origin $BRANCH --repo=https://${GH_PAGES}@github.com/$TARGET_REPO > /dev/null
     echo -e "Deploy completed\n"
 fi

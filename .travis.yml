@@ -2,7 +2,7 @@ branches:
   only:
   - master
 python:
-- 3.4sd
+- 3.4
 install:
 - npm install -g less
 - pip install -r requirements.txt --use-mirrors --user
