@@ -16,9 +16,9 @@ from pretty much anywhere.
 
 So, I read a couple of posts about it, specifically:
 
- - http://zonca.github.io/2013/09/automatically-build-pelican-and-publish-to-github-pages.html
- - http://blog.mathieu-leplatre.info/publish-your-pelican-blog-on-github-pages-via-travis-ci.html
- - http://kevinyap.ca/2014/06/deploying-pelican-sites-using-travis-ci/
+ - [How to automatically build your Pelican blog and publish it to Github Pages][3]
+ - [Publish your Pelican blog on Github pages via Travis-CI][4]
+ - [Deploying Pelican Sites Using Travis CI][5]
  
 I particularly liked the third one as the others (and other posts I read) use 
 `ghp-import` and it seemed unnecessary to add a new dependency to the project 
@@ -60,3 +60,6 @@ interested in setting up your own Pelican site with minimal fuss.
 
   [1]: http://stackoverflow.com/q/19845679/3001761
   [2]: http://stackoverflow.com/q/5772192/3001761
+  [3]: http://zonca.github.io/2013/09/automatically-build-pelican-and-publish-to-github-pages.html
+  [4]: http://blog.mathieu-leplatre.info/publish-your-pelican-blog-on-github-pages-via-travis-ci.html
+  [5]: http://kevinyap.ca/2014/06/deploying-pelican-sites-using-travis-ci/
