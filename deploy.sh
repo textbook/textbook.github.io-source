@@ -12,10 +12,10 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     #go into directory and copy data we're interested in to that directory
     cd $PELICAN_OUTPUT_FOLDER
     #add, commit and push files
-    git add -f .
+    git add -f -A .
     echo -e "Changes:\n"
     git status -s
-    # git commit -m "Travis build $TRAVIS_BUILD_NUMBER pushed to Github Pages"
-    # git push -fq origin $BRANCH > /dev/null
-    # echo -e "Deploy completed\n"
+    git commit -m "Travis build $TRAVIS_BUILD_NUMBER pushed to Github Pages"
+    git push -fq origin $BRANCH > /dev/null
+    echo -e "Deploy completed\n"
 fi
