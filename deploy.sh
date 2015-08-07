@@ -9,13 +9,15 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
         git config --global user.email "travis@travis-ci.org"
         git config --global user.name "Travis"
     fi
-    #go into directory and copy data we're interested in to that directory
+    #go into directory and authenticate to remote
     cd $PELICAN_OUTPUT_FOLDER
+    git remote rm origin
+    git remote add origin https://${GH_PAGES}@github.com/$TARGET_REPO
     #add, commit and push files
     git add -f -A .
     echo -e "Changes:\n"
     git status -s
     git commit -m "Travis build $TRAVIS_BUILD_NUMBER pushed to Github Pages"
-    git push -fq origin $BRANCH --repo=https://${GH_PAGES}@github.com/$TARGET_REPO > /dev/null
+    git push -fq origin $BRANCH > /dev/null
     echo -e "Deploy completed\n"
 fi
