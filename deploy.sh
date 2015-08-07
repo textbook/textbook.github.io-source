@@ -11,6 +11,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     fi
     #go into directory and authenticate to remote
     cd $PELICAN_OUTPUT_FOLDER
+    git checkout master
     git remote rm origin
     git remote add origin https://${GH_PAGES}@github.com/$TARGET_REPO
     #add, commit and push files
