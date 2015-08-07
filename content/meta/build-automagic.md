@@ -35,7 +35,8 @@ pushing, and a bit of research suggested that it isn't possible to modify the
 clone process, but you can add the correct origin back manually. Based on [this 
 (criminally underrated) SO post][1], I added the following to `deploy.sh`:
 
-```:::shell
+```
+:::shell
 git remote rm origin
 git remote add origin https://${GH_PAGES}@github.com/$TARGET_REPO
 ```
@@ -46,7 +47,8 @@ the changes weren't actually ending up in the `master` branch. To fix this took
 committing then changes then switching that back into `master` before the push,
 so I added:
 
-```:::shell
+```
+:::shell
 git checkout -b temp
 ...
 git checkout -B master temp
