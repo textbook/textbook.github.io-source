@@ -11,7 +11,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     fi
     #go into directory and authenticate to remote
     cd $PELICAN_OUTPUT_FOLDER
-    git checkout master
+    git checkout -b temp
     git remote rm origin
     git remote add origin https://${GH_PAGES}@github.com/$TARGET_REPO
     #add, commit and push files
@@ -19,6 +19,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     echo -e "Changes:\n"
     git status -s
     git commit -m "Travis build $TRAVIS_BUILD_NUMBER pushed to Github Pages"
+    git checkout -B master temp
     git push -fq origin $BRANCH > /dev/null
     echo -e "Deploy completed\n"
 fi
