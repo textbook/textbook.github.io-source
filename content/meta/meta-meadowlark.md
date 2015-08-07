@@ -1,8 +1,6 @@
 Title: Creating a blog in Pelican
 Date: 2015-07-11 16:00
-Category: Meta
 Tags: code, python, pelican
-Slug: meta-meadowlark
 Authors: Jonathan Sharpe
 Summary: The one you're reading right now, in fact!
 

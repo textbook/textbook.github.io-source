@@ -1,8 +1,6 @@
 Title: Switching Meadowlark to Less CSS
 Date: 2015-08-03 22:00
-Category: Meta
 Tags: code, pelican, css
-Slug: much-less-css
 Authors: Jonathan Sharpe
 Summary: In which I faff around with webassets and reduce duplication
 

@@ -1,8 +1,6 @@
 Title: Creating a static Polymer site on Divshot
 Date: 2015-07-23 20:20
-Category: Development
 Tags: code, javascript
-Slug: polymer-and-divshot
 Authors: Jonathan Sharpe
 Summary: An adventure in modern web development; fun with Bower, Node.JS, and more.
 

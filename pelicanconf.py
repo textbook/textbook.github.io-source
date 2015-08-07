@@ -40,27 +40,33 @@ SOCIAL = (
 )
 
 # Other settings
-#DISQUS_SITENAME = 'textbook-dev'
 GITHUB_URL = 'https://github.com/textbook/textbook.github.io-source'
-#GOOGLE_ANALYTICS = 'UA-64837080-1'
 TWITTER_USERNAME = 'jonrsharpe'
+
+DELETE_OUTPUT_DIRECTORY = True
+OUTPUT_RETENTION = ['.git', '.gitignore']
 
 # Static files
 STATIC_PATHS = [
 	'images',
-	'extra/robots.txt',
-	'extra/favicon.ico',
-	'extra/CNAME',
+# 	'extra/robots.txt',
+# 	'extra/favicon.ico',
+# 	'extra/CNAME',
+# 	'extra/README.md',
+	'extra',
 ]
 EXTRA_PATH_METADATA = {
     'extra/robots.txt': {'path': 'robots.txt'},
     'extra/favicon.ico': {'path': 'favicon.ico'},
     'extra/CNAME': {'path': 'CNAME'},
+	'extra/README': {'path': 'README'},
 }
+# IGNORE_FILES = ['.#*', 'README.md']
 
 DEFAULT_PAGINATION = 4
 
 # URL settings
+SLUGIFY_SOURCE = 'basename'
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True
 ARTICLE_SAVE_AS = '{date:%Y}/{date:%b}/{date:%d}/{slug}.html'
