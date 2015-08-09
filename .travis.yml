@@ -4,7 +4,8 @@ branches:
 python:
 - 3.4
 install:
-- pip install -r requirements.txt --user
+- npm install -g less
+- pip install -r requirements.txt --use-mirrors --user
 script:
 - pelican content -s publishconf.py
 - bash deploy.sh
