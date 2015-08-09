@@ -20,7 +20,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     commitHash=$(git rev-parse HEAD)
     commitMessage=$(git log -1 --pretty=%B)
     #get the current output in a separate directory
-    git clone --quiet --branch=$BRANCH https://${GH_PAGES}@github.com/$TARGET_REPO $GITHUB_OUTPUT_FOLDER > /dev/null
+    git clone --quiet --branch=$BRANCH https://${GH_TOKEN}@github.com/$TARGET_REPO $GITHUB_OUTPUT_FOLDER > /dev/null
     #copy the new output
     cd $GITHUB_OUTPUT_FOLDER
     rsync -rv --exclude=.git  ../$PELICAN_OUTPUT_FOLDER/* .

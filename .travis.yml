@@ -4,14 +4,13 @@ branches:
 python:
 - 3.4
 install:
-- npm install -g less
-- pip install -r requirements.txt --use-mirrors --user
+- pip install -r requirements.txt --user
 script:
 - pelican content -s publishconf.py
+- bash deploy.sh
 notifications:
   email:
     on_success: never
     on_failure: always
 before_install:
   - git submodule update --init --recursive
-after_success: bash deploy.sh
