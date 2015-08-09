@@ -7,7 +7,7 @@ GH_USERNAME=textbook
 BRANCH=master
 GITHUB_OUTPUT_FOLDER=built_website
 PELICAN_OUTPUT_FOLDER=output
-SHOW_CHANGES=true
+SHOW_CHANGES=false
 TARGET_REPO=$GH_USERNAME/$GH_USERNAME.github.io.git
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
@@ -28,11 +28,14 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     git add -A .
     if [ "$SHOW_CHANGES" == "true" ]; then
       echo -e "Changes:"
-      git status -#!/bin/sh
+      git status -s
       echo -e "\n"
     fi
     detailedMessage="Commit $commitHash pushed to GitHub Pages by Travis build $TRAVIS_BUILD_NUMBER"
     git commit -m "$commitMessage" -m "$detailedMessage"
     git push -fq origin $BRANCH > /dev/null
+    if [ $? != 0 ]; then
+      exit 1
+    fi
     echo -e "Deploy completed\n"
 fi
