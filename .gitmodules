@@ -1,6 +1,3 @@
-[submodule "output"]
-	path = output
-	url = https://github.com/textbook/textbook.github.io.git
 [submodule "meadowlark"]
 	path = meadowlark
 	url = https://github.com/textbook/meadowlark.git
