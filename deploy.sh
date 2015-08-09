@@ -9,6 +9,9 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
         git config --global user.email "travis@travis-ci.org"
         git config --global user.name "Travis"
     fi
+    # Pull hash and commit message of the most recent commit
+    commitHash=$(git rev-parse HEAD)
+    commitMessage=$(git log -1 --pretty=%B)
     #go into directory and authenticate to remote
     cd $PELICAN_OUTPUT_FOLDER
     git checkout -b temp
@@ -18,7 +21,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     git add -f -A .
     echo -e "Changes:\n"
     git status -s
-    git commit -m "Travis build $TRAVIS_BUILD_NUMBER pushed to Github Pages"
+    git commit -m "$commitMessage" -m "Commit $commitHash pushed to GitHub Pages by Travis build $TRAVIS_BUILD_NUMBER"
     git checkout -B master temp
     git push -fq origin $BRANCH > /dev/null
     echo -e "Deploy completed\n"
