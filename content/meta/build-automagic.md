@@ -8,7 +8,7 @@ The one downside of using Pelican to build the site, as opposed to the Tumblr
 blog I was previously using, is that I have to *actually build the site*. This
 means that I need to have software installed to write a new article which, 
 while not really a huge problem, is slightly awkward. However, I'd read a few 
-things about using online automated build/continuous integrationI services to 
+things about using online automated build/continuous integration services to 
 build the site for me when I push to the source repo. This means I can write a 
 new article on GitHub [*Ed*: it was right around this point that I thought *"oh 
 yeah, I __can__ write this on GitHub!"*, and did so], and can therefore write
@@ -20,7 +20,7 @@ So, I read a couple of posts about it, specifically:
  - [Publish your Pelican blog on Github pages via Travis-CI][4]
  - [Deploying Pelican Sites Using Travis CI][5]
  
-I particularly liked the third one as the others (and other posts I read) use 
+I particularly liked this approach as some of the other posts I read use 
 `ghp-import` and it seemed unnecessary to add a new dependency to the project 
 when `git` provides the tools for pretty much everything that I want. Initially
 I implemented it more-or-less as-is, using `rsync` to copy the changes from the
@@ -44,7 +44,7 @@ git remote add origin https://${GH_PAGES}@github.com/$TARGET_REPO
 This caused my second problem, that I was now pushing to a detached `HEAD`, so
 the changes weren't actually ending up in the `master` branch. To fix this took
 [another SO question][2], which suggested committing to a temporary branch, 
-committing then changes then switching that back into `master` before the push,
+committing the changes then switching that back into `master` before the push,
 so I added:
 
 ```
