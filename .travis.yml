@@ -5,7 +5,7 @@ python:
 - 3.4
 install:
 - npm install -g less
-- pip install -r requirements.txt --use-mirrors --user
+- pip install -r requirements.txt --user
 script:
 - pelican content -s publishconf.py
 - bash deploy.sh
