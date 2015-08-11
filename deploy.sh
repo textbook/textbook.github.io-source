@@ -20,7 +20,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     commitHash=$(git rev-parse HEAD)
     commitMessage=$(git log -1 --pretty=%B)
     #get the current output in a separate directory
-    git clone --quiet --branch=$BRANCH https://${GH_PAGES}@github.com/$TARGET_REPO $GITHUB_OUTPUT_FOLDER > /dev/null
+    git clone --quiet --branch=$BRANCH https://${GH_PAGES_FAIL}@github.com/$TARGET_REPO $GITHUB_OUTPUT_FOLDER > /dev/null
     #copy the new output
     cd $GITHUB_OUTPUT_FOLDER
     rsync -rv --exclude=.git  ../$PELICAN_OUTPUT_FOLDER/* .
@@ -33,9 +33,6 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     fi
     detailedMessage="Commit $commitHash pushed to GitHub Pages by Travis build $TRAVIS_BUILD_NUMBER"
     git commit -m "$commitMessage" -m "$detailedMessage"
-    git push -fq origin $BRANCH > /dev/null
-    if [ $? != 0 ]; then
-      exit 1
-    fi
+    git push -fq origin $BRANCH > /dev/null || exit $?
     echo -e "Deploy completed\n"
 fi
