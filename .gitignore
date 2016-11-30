@@ -1,6 +1,9 @@
+# JetBrains
+.idea/
+
 # Python stuff
 *.py[cod]
 __pycache__/
 
 # Pelican output
-/output
+output/

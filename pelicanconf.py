@@ -12,7 +12,7 @@ TIMEZONE = 'Europe/London'
 DEFAULT_LANG = 'en'
 
 # Appearance
-THEME = 'meadowlark'
+THEME = 'bulrush'
 PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['assets']
 JINJA_EXTENSIONS = ['webassets.ext.jinja2.AssetsExtension']
@@ -27,13 +27,12 @@ AUTHOR_FEED_RSS = None
 # Blogroll
 LINKS = (
 	('Atom IDE', 'http://blog.atom.io/'),
-	('Campo Santo', 'http://blog.camposanto.com/'),
+	('Pivotal Engineering Journal', 'http://engineering.pivotal.io/'),
 	('Code as Craft', 'https://codeascraft.com/'),
 )
 
 # Social widget
 SOCIAL = (
-	('BitBucket', 'https://bitbucket.org/jonrsharpe'),
 	('GitHub', 'https://github.com/textbook'),
     ('Stack Overflow', 'http://stackoverflow.com/users/3001761/jonrsharpe'),
     ('Twitter', 'https://twitter.com/jonrsharpe'),
