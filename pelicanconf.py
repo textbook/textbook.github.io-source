@@ -26,7 +26,7 @@ AUTHOR_FEED_RSS = None
 
 # Blogroll
 LINKS = (
-	('Atom IDE', 'http://blog.atom.io/'),
+	('The Clean Code Blog', 'http://blog.cleancoder.com/'),
 	('Pivotal Engineering Journal', 'http://engineering.pivotal.io/'),
 	('Code as Craft', 'https://codeascraft.com/'),
 )
