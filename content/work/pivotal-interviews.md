@@ -28,8 +28,8 @@ CEO Rob Mee with the quote:
 
 All of this means that there are plenty of great programmers out there who would 
 not be a great fit for this working method, preferring to stick on some 
-headphones and get stuck into the work on their own. Conversely, there plenty of 
-people who might not think that they are great programmers who have all of the 
+headphones and get stuck into the work on their own. Conversely, there are plenty 
+of people who might not think that they are great programmers who have all of the 
 skills to flourish as an engineer at Pivotal. Pivotal hires, in short, for 
 *empathy*. So how do they do that?
 
@@ -78,11 +78,11 @@ Pairing Interview"*).
     I have hosted a few interviews too, which entails introducing the candidate
     at the morning's office standup, taking them out for lunch and collecting 
     any feedback they have at the end. One candidate recently described it to me 
-    as *"they way [they] would want to be interviewed"*, which is heartening.
+    as *"the way [they] would want to be interviewed"*, which is heartening.
 
 In all, I think it's a good approach that really reinforces the way that Pivotal 
 works; it has certainly lead to great teams at the Pivotal offices that I've 
-worked in, London and Dublin. By focusing on the skills you'll be using 
+worked in (London and Dublin). By focusing on the skills you'll be using 
 day-to-day rather than contrived whiteboard challenges or trick questions, it 
 gives applicants from a broad range of backgrounds the chance to find out 
 whether they would enjoy the work, while acknowledging the truth that skills in
