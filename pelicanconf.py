@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 # Base configuration
 AUTHOR = 'Jonathan Sharpe'
-AVATAR = 'avatar.jpg'
+AVATAR = 'avatar.png'
 SITENAME = 'textbook'
 SITESUBTITLE = "These are my opinions - if you don't like them, I have others"
 PATH = 'content'
@@ -15,7 +15,7 @@ DEFAULT_LANG = 'en'
 THEME = 'bulrush'
 PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['assets']
-JINJA_EXTENSIONS = ['webassets.ext.jinja2.AssetsExtension']
+JINJA_EXTENSIONS = ['webassets.ext.jinja2.AssetsExtension', 'jinja2.ext.with_']
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
