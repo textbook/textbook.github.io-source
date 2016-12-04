@@ -10,7 +10,7 @@ development methodology. One of the core practices of this methodology is pair
 programming: two engineers, two mice, two keyboards, two monitors but *one
 computer* and *one task*.  Here's what a typical day of pairing looks like:
 
- ![Alt Text]({filename}/images/springboard-pairing.png)
+ ![Pairing at Pivotal London]({filename}/images/springboard-pairing.png)
  
 I won't go over the various methods for pairing here, but suffice to say
 this style of development requires solid interpersonal skills, even before we
