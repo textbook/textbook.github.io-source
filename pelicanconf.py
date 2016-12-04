@@ -26,14 +26,14 @@ AUTHOR_FEED_RSS = None
 
 # Blogroll
 LINKS = (
-	('The Clean Code Blog', 'http://blog.cleancoder.com/'),
-	('Pivotal Engineering Journal', 'http://engineering.pivotal.io/'),
-	('Code as Craft', 'https://codeascraft.com/'),
+    ('The Clean Code Blog', 'http://blog.cleancoder.com/'),
+    ('Pivotal Engineering Journal', 'http://engineering.pivotal.io/'),
+    ('Code as Craft', 'https://codeascraft.com/'),
 )
 
 # Social widget
 SOCIAL = (
-	('GitHub', 'https://github.com/textbook'),
+    ('GitHub', 'https://github.com/textbook'),
     ('Stack Overflow', 'http://stackoverflow.com/users/3001761/jonrsharpe'),
     ('Twitter', 'https://twitter.com/jonrsharpe'),
 )
