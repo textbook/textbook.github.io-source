@@ -1,9 +1,8 @@
 Title: Interviewing and hiring at Pivotal
-Date: 2016-12-03 12:00
+Date: 2016-12-05 21:11
 Tags: pivotal, hiring
 Authors: Jonathan Sharpe
 Summary: My experiences of the hiring process at Pivotal, from both sides.
-Status: draft
 
 My current employer, Pivotal, practices the Extreme Programming (XP) software
 development methodology. One of the core practices of this methodology is pair
@@ -27,11 +26,10 @@ CEO Rob Mee with the quote:
  > and Programming][1]</small>
 
 All of this means that there are plenty of great programmers out there who would
-not be a great fit for this working method, preferring to stick on some
-headphones and get stuck into the work on their own. Conversely, there are plenty
-of people who might not think that they are great programmers who have all of the
-skills needed to flourish as an engineer at Pivotal. As [Pivots Are What Set
-Pivotal Apart][6] puts it:
+not be a great fit for this working method, preferring to work exclusively on
+their own. Conversely, there are plenty of people who might not think that they
+are great programmers who have all of the skills needed to flourish as an
+engineer at Pivotal. As [Pivots Are What Set Pivotal Apart][6] puts it:
 
  > ...being a Pivot means embracing the principles at the core of this approach.
  > Pivots teach and learn from each other, demonstrating empathy, trust,
