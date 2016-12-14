@@ -15,7 +15,9 @@ DEFAULT_LANG = 'en'
 THEME = 'bulrush'
 PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['assets']
-JINJA_EXTENSIONS = ['webassets.ext.jinja2.AssetsExtension', 'jinja2.ext.with_']
+JINJA_ENVIRONMENT = {
+    'extensions': ['webassets.ext.jinja2.AssetsExtension', 'jinja2.ext.with_'],
+}
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
@@ -47,18 +49,14 @@ OUTPUT_RETENTION = ['.git', '.gitignore']
 
 # Static files
 STATIC_PATHS = [
-	'images',
-# 	'extra/robots.txt',
-# 	'extra/favicon.ico',
-# 	'extra/CNAME',
-# 	'extra/README.md',
-	'extra',
+    'images',
+    'extra',
 ]
 EXTRA_PATH_METADATA = {
     'extra/robots.txt': {'path': 'robots.txt'},
     'extra/favicon.ico': {'path': 'favicon.ico'},
     'extra/CNAME': {'path': 'CNAME'},
-	'extra/README': {'path': 'README'},
+    'extra/README': {'path': 'README'},
 }
 # IGNORE_FILES = ['.#*', 'README.md']
 
