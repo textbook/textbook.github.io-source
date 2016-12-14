@@ -1,6 +1,3 @@
-[submodule "meadowlark"]
-	path = meadowlark
-	url = https://github.com/textbook/meadowlark.git
 [submodule "pelican-plugins"]
 	path = pelican-plugins
 	url = https://github.com/getpelican/pelican-plugins.git
