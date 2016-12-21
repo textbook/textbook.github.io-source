@@ -2,7 +2,9 @@ branches:
   only:
   - master
 python:
-- 3.4
+- 3.5
+before_install:
+- git submodule update --init --recursive
 install:
 - npm install -g less
 - pip install -r requirements.txt --user
@@ -13,5 +15,3 @@ notifications:
   email:
     on_success: never
     on_failure: always
-before_install:
-  - git submodule update --init --recursive
