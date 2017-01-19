@@ -38,6 +38,7 @@ SOCIAL = (
     ('GitHub', 'https://github.com/textbook'),
     ('Stack Overflow', 'http://stackoverflow.com/users/3001761/jonrsharpe'),
     ('Twitter', 'https://twitter.com/jonrsharpe'),
+    ('500px', 'https://500px.com/jonrsharpe'),
 )
 
 # Other settings
