@@ -1,5 +1,5 @@
 Title: Testing async data in Angular
-Date: 2017-04-14 15:30
+Date: 2017-04-16 15:00
 Tags: code, angular, typescript, rxjs, tdd
 Authors: Jonathan Sharpe
 Summary: Using the Angular TestBed to test asynchronous API data manipulation.

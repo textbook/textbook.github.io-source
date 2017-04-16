@@ -1,6 +1,6 @@
 Title: Handling data with the Angular AsyncPipe
 Date: 2017-04-09 15:20
-Modified: 2017-04-14 15:30
+Modified: 2017-04-16 15:00
 Tags: code, angular, typescript, rxjs
 Authors: Jonathan Sharpe
 Summary: Patterns for manipulating API data asynchronously using RxJS Observables in Angular. 
