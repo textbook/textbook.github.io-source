@@ -1,0 +1,41 @@
+.hero.is-primary {
+  background-color: #4abdac;
+}
+
+footer.footer .github-fork-ribbon-wrapper .github-fork-ribbon {
+  background-color: #4abdac;
+}
+
+footer.footer .github-fork-ribbon-wrapper .github-fork-ribbon:hover a {
+  border-color: #4abdac;
+  color: #4abdac;
+}
+
+a, .card-content a h3 {
+  color: #4abdac;
+}
+
+.menu-list a.is-active {
+  background-color: #fc4a1a;
+}
+
+a.nav-item.is-tab.is-active, a.nav-item.is-tab.is-active:hover {
+  border-bottom-color: #fc4a1a;
+  color: #fc4a1a;
+}
+
+article a:hover, footer a:hover, #content a:hover, .menu-list a:hover, .card-content a:hover h3 {
+  color: #f7b733;
+}
+
+a.nav-item.is-tab:hover {
+  border-bottom-color: #f7b733;
+}
+
+article code {
+  color: #f7b733;
+}
+
+.menu-list a.is-active:hover {
+  color: #ffffff;
+}
