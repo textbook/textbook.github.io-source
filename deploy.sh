@@ -23,7 +23,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
     git clone --quiet --branch=$BRANCH https://${GH_PAGES}@github.com/$TARGET_REPO $GITHUB_OUTPUT_FOLDER > /dev/null
     #copy the new output
     cd $GITHUB_OUTPUT_FOLDER
-    rsync -rv --exclude=.git  ../$PELICAN_OUTPUT_FOLDER/* .
+    rsync -rv --exclude=.git  ../$PELICAN_OUTPUT_FOLDER/* . --delete
     #add, commit and push files
     git add -A .
     if [ "$SHOW_CHANGES" == "true" ]; then
