@@ -39,3 +39,11 @@ article code {
 .menu-list a.is-active:hover {
   color: #ffffff;
 }
+
+#mc_embed_signup_scroll button.is-success {
+  background-color: #4abdac;
+}
+
+#mc_embed_signup_scroll .response.is-success {
+    color: #4abdac;
+}
