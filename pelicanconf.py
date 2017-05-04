@@ -44,6 +44,12 @@ SOCIAL = (
 # Other settings
 GITHUB_URL = 'https://github.com/textbook/textbook.github.io-source'
 TWITTER_USERNAME = 'jonrsharpe'
+MAILCHIMP = dict(
+    domain='jonrshar.us15.list-manage.com',
+    user_id='7ada11180797f3af73228bf0b',
+    list_id='d172abcbd2',
+    rewards_url='http://eepurl.com/cNv6Rb',
+)
 
 DELETE_OUTPUT_DIRECTORY = True
 OUTPUT_RETENTION = ['.git', '.gitignore']
