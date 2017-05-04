@@ -6,11 +6,6 @@ footer.footer .github-fork-ribbon-wrapper .github-fork-ribbon {
   background-color: #4abdac;
 }
 
-footer.footer .github-fork-ribbon-wrapper .github-fork-ribbon:hover a {
-  border-color: #4abdac;
-  color: #4abdac;
-}
-
 a, .card-content a h3 {
   color: #4abdac;
 }
@@ -22,6 +17,11 @@ a, .card-content a h3 {
 a.nav-item.is-tab.is-active, a.nav-item.is-tab.is-active:hover {
   border-bottom-color: #fc4a1a;
   color: #fc4a1a;
+}
+
+footer.footer .github-fork-ribbon-wrapper .github-fork-ribbon:hover a {
+  border-color: #f7b733;
+  color: #f7b733;
 }
 
 article a:hover, footer a:hover, #content a:hover, .menu-list a:hover, .card-content a:hover h3 {
