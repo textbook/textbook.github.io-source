@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
 
+import bulrush
+
 # Base configuration
 AUTHOR = 'Jonathan Sharpe'
 AVATAR = 'avatar.png'
@@ -12,12 +14,11 @@ TIMEZONE = 'Europe/London'
 DEFAULT_LANG = 'en'
 
 # Appearance
-THEME = 'bulrush'
+THEME = bulrush.PATH
 PLUGIN_PATHS = ['pelican-plugins']
 PLUGINS = ['assets']
-JINJA_ENVIRONMENT = {
-    'extensions': ['webassets.ext.jinja2.AssetsExtension', 'jinja2.ext.with_'],
-}
+JINJA_ENVIRONMENT = bulrush.ENVIRONMENT
+JINJA_FILTERS = bulrush.FILTERS
 
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
