@@ -65,6 +65,7 @@ EXTRA_PATH_METADATA = {
     'extra/robots.txt': {'path': 'robots.txt'},
     'extra/favicon.ico': {'path': 'favicon.ico'},
     'extra/CNAME': {'path': 'CNAME'},
+    'extra/LICENSE': {'path': 'LICENSE'},
     'extra/README': {'path': 'README'},
 }
 # IGNORE_FILES = ['.#*', 'README.md']
