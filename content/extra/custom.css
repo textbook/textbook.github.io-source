@@ -36,6 +36,14 @@ article code {
   color: #268bd2;
 }
 
+article a > code {
+  color: #4abdac;
+}
+
+article a:hover > code {
+  color: #f7b733;
+}
+
 .menu-list a.is-active:hover {
   color: #ffffff;
 }

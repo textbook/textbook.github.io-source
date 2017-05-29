@@ -1,5 +1,6 @@
 Title: Angular's "ng-" elements
 Date: 2017-05-20 17:00
+Modified: 2017-05-29 15:30
 Tags: angular, html
 Authors: Jonathan Sharpe
 Summary: A quick spotters' guide to some of the "ng-" elements that Angular provides.
@@ -138,6 +139,9 @@ e.g. `<ng-content *ngFor="...">`, as the content is only ever projected once,
 and the projected content from the parent can't reference variables in the
 child.
 
+ > Note that you *can* pass down a context if you use a template outlet to
+ > render the child content, see [ngTemplateOutlet tricks][2].
+
 ```html
 <!-- template -->
 <div>
@@ -246,3 +250,4 @@ depending on a boolean property:
 ```
 
   [1]: https://angular.io/docs/ts/latest/guide/structural-directives.html
+  [2]: {filename}/development/angular-ng-template-outlet.md
