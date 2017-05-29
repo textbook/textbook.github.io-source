@@ -51,6 +51,7 @@ MAILCHIMP = dict(
     list_id='d172abcbd2',
     rewards_url='http://eepurl.com/cNv6Rb',
 )
+LICENSE = 'CC BY-SA 4.0'
 
 DELETE_OUTPUT_DIRECTORY = True
 OUTPUT_RETENTION = ['.git', '.gitignore']
