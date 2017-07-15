@@ -1,5 +1,6 @@
 Title: Testing async data in Angular
 Date: 2017-04-16 15:00
+Modified: 2017-07-15 20:30
 Tags: code, angular, typescript, rxjs, tdd
 Authors: Jonathan Sharpe
 Summary: Using the Angular TestBed to test asynchronous API data manipulation.
@@ -279,6 +280,10 @@ callback in the service:
  
 There are a few open issues related to this behaviour, so hopefully it will be 
 fixed at some point in the near future.
+
+ > **Update**: as of 4.3.0 the new `HttpClient` module seems to deal with this
+ > more neatly, providing an official equivalent of `MockError`; see [New to
+ > Angular 4.3: HttpClient][7] for more information.
  
   [1]: {filename}/development/async-angular-data.md
   [2]: https://angular.io/docs/ts/latest/guide/testing.html
@@ -286,3 +291,4 @@ fixed at some point in the near future.
   [4]: https://cli.angular.io/
   [5]: https://github.com/angular/angular/pull/8961#issuecomment-251549757
   [6]: https://jasmine.github.io/2.5/introduction#section-Asynchronous_Support
+  [7]: {filename}/development/angular-http-client.md
