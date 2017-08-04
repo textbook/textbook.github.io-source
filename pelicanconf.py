@@ -29,9 +29,10 @@ AUTHOR_FEED_RSS = None
 
 # Blogroll
 LINKS = (
-    ('The Clean Code Blog', 'http://blog.cleancoder.com/'),
     ('Pivotal Engineering Journal', 'http://engineering.pivotal.io/'),
+    ('The Clean Code Blog', 'http://blog.cleancoder.com/'),
     ('Code as Craft', 'https://codeascraft.com/'),
+    ('Corgibytes Blog', 'http://corgibytes.com/blog/'),
 )
 
 # Social widget
