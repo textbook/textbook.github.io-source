@@ -77,7 +77,7 @@ DEFAULT_PAGINATION = 5
 # URL settings
 SLUGIFY_SOURCE = 'basename'
 # Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
+RELATIVE_URLS = True
 ARTICLE_SAVE_AS = '{date:%Y}/{date:%b}/{date:%d}/{slug}.html'
 ARTICLE_URL = '{date:%Y}/{date:%b}/{date:%d}/{slug}.html'
 # Don't need the author pages
