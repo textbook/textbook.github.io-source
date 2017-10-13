@@ -1,5 +1,6 @@
 Title: New to Angular 4.3: HttpClient
 Date: 2017-07-15 20:30
+Modified: 2017-10-13 14:40
 Tags: angular, html
 Authors: Jonathan Sharpe
 Summary: The latest version of Angular includes a new HTTP client, with a new API.
@@ -64,7 +65,7 @@ export class ProgressInterceptor implements HttpInterceptor {
     const reportingRequest = req.clone({ reportProgress: true });
     const handle = next.handle(reportingRequest);
 
-    handle.subscribe((event: HttpEvent<T>) => {
+    return handle.do((event: HttpEvent<T>) => {
       switch (event.type) {
         case HttpEventType.Sent:
           this.progressSubject.next(null);
@@ -80,8 +81,6 @@ export class ProgressInterceptor implements HttpInterceptor {
           break;
       }
     });
-
-    return handle;
   }
 }
 ```
@@ -191,6 +190,10 @@ This is just a toy implementation (one obvious issue: what if there are two
 parallel requests?) but hopefully shows what's possible with the new API. Note
 that the old client (in `@angular/http`) isn't going away just yet; the new one
 is available in parallel (in `@angular/common/http`) for the time being.
+
+ > **Update**: an earlier version of this article both subscribed to *and* 
+ > returned the `handle` from the interceptor - as VerSo pointed out in the 
+ > comments (thanks!), this would mean that the request got made twice.
 
   [1]: https://netbasal.com/a-taste-from-the-new-angular-http-client-38fcdc6b359b
   [2]: https://www.ng-newsletter.com/
