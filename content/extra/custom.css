@@ -1,20 +1,36 @@
 .hero.is-primary {
-  background-color: #4abdac;
+  background-color: #00d1b2;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0;
+}
+
+.hero.is-primary a:not(.button):not(.dropdown-item):not(.tag).is-active,
+    .hero.is-primary a:not(.button):not(.dropdown-item):not(.tag):hover {
+  color: white;
+}
+
+.hero.is-primary a.navbar-item.is-active, .hero.is-primary a.navbar-item:hover {
+  background-color: #00d1b2;
+  color: white;
 }
 
 footer.footer .github-fork-ribbon-wrapper .github-fork-ribbon {
-  background-color: #4abdac;
+  background-color: #00d1b2;
 }
 
 a, .card-content a h3 {
-  color: #4abdac;
+  color: #00d1b2;
 }
 
 .menu-list a.is-active {
   background-color: #fc4a1a;
 }
 
-a.nav-item.is-tab.is-active, a.nav-item.is-tab.is-active:hover {
+a.navbar-item.is-tab {
+  color: #7a7a7a;
+}
+
+a.navbar-item.is-tab.is-active, a.navbar-item.is-tab.is-active:hover {
   border-bottom-color: #fc4a1a;
   color: #fc4a1a;
 }
@@ -28,8 +44,9 @@ article a:hover, footer a:hover, #content a:hover, .menu-list a:hover, .card-con
   color: #f7b733;
 }
 
-a.nav-item.is-tab:hover {
+a.navbar-item.is-tab:hover {
   border-bottom-color: #f7b733;
+  color: #363636;
 }
 
 article code {
@@ -37,7 +54,7 @@ article code {
 }
 
 article a > code {
-  color: #4abdac;
+  color: #00d1b2;
 }
 
 article a:hover > code {
@@ -49,9 +66,9 @@ article a:hover > code {
 }
 
 #mc_embed_signup_scroll button.is-success {
-  background-color: #4abdac;
+  background-color: #00d1b2;
 }
 
 #mc_embed_signup_scroll .response.is-success {
-    color: #4abdac;
+    color: #00d1b2;
 }
