@@ -57,9 +57,7 @@ Authentication to publish or modify settings"_ option for your package while
 you're using non-2FA service accounts. If you have other maintainers, make sure
 they _are_ using full 2FA on their main accounts.
 
-[1]:
-  https://blog.npmjs.org/post/166039777883/protect-your-npm-account-with-two-factor
-[2]:
-  https://medium.com/@sgyio/how-to-deploy-npm-package-with-2fa-enabled-on-write-49843bf493a8
+[1]: https://blog.npmjs.org/post/166039777883/protect-your-npm-account-with-two-factor
+[2]: https://medium.com/@sgyio/how-to-deploy-npm-package-with-2fa-enabled-on-write-49843bf493a8
 [3]: https://docs.travis-ci.com/user/deployment/npm/
 [4]: https://www.vaultproject.io/
