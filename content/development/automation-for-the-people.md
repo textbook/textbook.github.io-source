@@ -1,5 +1,6 @@
 Title: Automation for the people
 Date: 2019-02-10 15:30
+Modified: 2019-02-11 10:15
 Tags: code, javascript, npm
 Authors: Jonathan Sharpe
 Summary: Making developers' lives easier and more productive with package file automation
@@ -57,7 +58,7 @@ it is to figure out what's meaningfully changed when reviewing a commit, the
 better (for the same reason I think trailing commas are a good thing!)
 
 In general, the less they have to think about, the better; although the [ASI]
-rules are fairly straightforward, for example, using colons everywhere means
+rules are fairly straightforward, for example, using semicolons everywhere means
 they *never have to consider it*. Modern tools can generally do this for them;
 individuals can write the code how they want to, then auto-fix on type, save or
 lint to the agreed shared rules. The team can now focus more of its time on
