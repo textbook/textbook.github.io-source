@@ -44,7 +44,7 @@ from CI. Here's how:
     **Invite maintainer** section, type the name of your service account and
     click _Invite_. You should then see something like this:
 
-    ![fauxauth maintainers list]({filename}/images/fauxauth-maintainers.png)
+    ![fauxauth maintainers list]({static}/images/fauxauth-maintainers.png)
 
 You can use the service account token in your CI environment for automated
 deploys, without needing to reduce the security of your main account. I'd

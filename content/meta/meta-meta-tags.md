@@ -17,7 +17,7 @@ articles, e.g. `http://blog.jonrshar.pe/2015/Jul/06/context-manager-case.html`,
 into [the Twitter Cards validator][1], you will see something like the
 following:
 
- ![Twitter Cards Preview]({filename}/images/twitter-card-preview.png)
+ ![Twitter Cards Preview]({static}/images/twitter-card-preview.png)
  
 You may wonder how this is implemented. I'm using [template inheritance][5],
 provided by the Jinja2 template engine, to allow child templates to override

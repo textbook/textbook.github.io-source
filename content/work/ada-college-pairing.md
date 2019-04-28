@@ -14,7 +14,7 @@ They invited us to lead an introductory session on pair programming to around
 40 of their higher level digital apprentices. This is the material from that
 session, rewritten as a blog post.
 
- ![Pairing Table in San Francisco]({filename}/images/Process-Pairing-01.jpg)
+ ![Pairing Table in San Francisco]({static}/images/Process-Pairing-01.jpg)
 
 <small>*"Pairing Table in San Francisco"*, &copy; Pivotal</small>
 
