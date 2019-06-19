@@ -4,7 +4,7 @@ workflow "Deploy to gh-pages" {
 }
 
 action "Checkout submodules" {
-  uses = "./.github/submodules"
+  uses = "textbook/git-checkout-submodule-action@1.0.1"
 }
 
 action "Publish to gh-pages" {
