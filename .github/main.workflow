@@ -10,5 +10,7 @@ action "Checkout submodules" {
 action "Publish to gh-pages" {
   uses = "nelsonjchen/gh-pages-pelican-action@0.1.1"
   needs = ["Checkout submodules"]
-  secrets = ["GITHUB_TOKEN"]
+  secrets = [
+    "GIT_DEPLOY_KEY",
+  ]
 }
