@@ -1,9 +1,14 @@
 workflow "Deploy to gh-pages" {
-  resolves = ["Pelican -> GH Pages"]
   on = "push"
+  resolves = ["Publish to gh-pages"]
 }
 
-action "Pelican -> GH Pages" {
+action "Checkout submodules" {
+  uses = "./.github/submodules"
+}
+
+action "Publish to gh-pages" {
   uses = "nelsonjchen/gh-pages-pelican-action@0.1.1"
+  needs = ["Checkout submodules"]
   secrets = ["GITHUB_TOKEN"]
 }
