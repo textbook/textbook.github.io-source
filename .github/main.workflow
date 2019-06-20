@@ -4,7 +4,8 @@ workflow "Deploy to gh-pages" {
 }
 
 action "Checkout submodules" {
-  uses = "textbook/git-checkout-submodule-action@1.0.1"
+  uses = "srt32/git-actions@v0.0.3"
+  args = "git submodule update --init --recursive"
 }
 
 action "Publish to gh-pages" {
