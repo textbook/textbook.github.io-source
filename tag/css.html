@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width">
+  <title>textbook - css</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <link rel="stylesheet" href="../theme/css/main.557acf99.css">
+  <style media="print">.is-hidden-print{display:none !important}</style>
+      <link rel="stylesheet" href="../custom.css">
+</head>
+
+<body id="index" class="home">
+<header class="hero is-primary">
+  <div class="hero-head">
+    <div class="container">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item title is-3"
+             href="../">textbook</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<nav class="navbar has-shadow is-hidden-print">
+  <div class="container">
+    <div class="navbar-center"></div>
+    <span id="navToggle" class="navbar-burger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+    <div id="navMenu" class="navbar-menu">
+        <div class="navbar-end">
+              <a class="navbar-item is-tab "
+                 href="../category/work.html">work</a>
+              <a class="navbar-item is-tab "
+                 href="../category/meta.html">meta</a>
+              <a class="navbar-item is-tab "
+                 href="../category/development.html">development</a>
+        </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="section columns">
+    <div class="column is-three-quarters-desktop is-two-thirds-tablet">
+      <aside id="featured" class="body">
+        <article>
+          <h1 class="title">
+            <a href="../2015/Aug/03/much-less-css.html">Switching Meadowlark to Less CSS</a>
+          </h1>
+<footer class="post-info">
+  <abbr class="published" title="2015-08-03T22:00:00+01:00">
+    Published <span class="is-info">Mon 03 August 2015</span>
+    in <a href="../category/meta.html">meta</a>
+  </abbr>
+
+    <p class="author">
+      <em>by           Jonathan Sharpe
+</em>
+      <span class="tag is-small is-rounded">
+        <a href="../tag/code.html">code</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../tag/pelican.html">pelican</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../tag/css.html">css</a>
+      </span>
+    </p>
+  
+</footer>          <div class="section">
+            <p>As <a href="https://atom.io/">Atom</a>, the primary IDE I'm using to develop and maintain this site, uses
+<a href="http://lesscss.org/">Less CSS</a> in its stylesheets, I thought I'd adopt it to reduce the style
+duplication in the site's Meadowlark theme. However, this did not turn out to
+be as easy as initially anticipated, so I thought I'd write down the steps in
+case it helps someone else.</p>
+<p>First, an introduction: Less is one of a number of CSS preprocessors that has
+popped up to address some of the features lacking in vanilla CSS, such as
+defining variables and nesting styles. This allows the reduction of duplication,
+while still providing backwards compatibility and not giving the browser yet
+another task to do before the user gets to see the page they asked for.</p>
+<p>In case it took longer than expected to switch to Less I created a <code>less</code>
+branch in Git for both the root website repo and the <code>meadowlark</code> submodule. I'd
+already installed <a href="https://webassets.readthedocs.org/en/latest/">webassets</a> (<code>pip install webassets</code>), which <a href="http://docs.getpelican.com/">Pelican</a> can use
+to handle Less and other, similar tools (JavaScript minifiers, alternative CSS
+preprocessors, <em>et al.</em>), and Less itself (<code>npm install -g less</code>), but I still
+needed to ensure that Pelican and <a href="http://jinja.pocoo.org/">Jinja</a> had the appropriate extension
+installed. This entailed adding another Git submodule to the project, the
+<a href="https://github.com/getpelican/pelican-plugins.git"><code>pelican-plugins</code> repository</a>, to get access to the <code>assets</code> plugin.
+Then I added:</p>
+<div class="highlight"><pre><span></span><span class="n">PLUGIN_PATHS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pelican-plugins&#39;</span><span class="p">]</span>
+<span class="n">PLUGINS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;assets&#39;</span><span class="p">]</span>
+<span class="n">JINJA_EXTENSIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;webassets.ext.jinja2.AssetsExtension&#39;</span><span class="p">]</span>
+</pre></div>
+
+
+<p>to the <code>pelicanconf.py</code>. This enables use of the <code>{% assets %}</code> statement in
+templates, which will be used to process the <code>.less</code> files to <code>.css</code> as follows:</p>
+<div class="highlight"><pre><span></span>{% assets filters=&quot;less&quot;, output=&quot;css/main.css&quot;, &quot;css/main.less&quot; %}
+<span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;{{ SITEURL }}/{{ ASSET_URL }}&quot;</span><span class="p">&gt;</span>
+{% endassets %}
+</pre></div>
+
+
+<p>This tells Jinja to take the <code>main.less</code> file, run it through the <code>less</code> filter,
+save it as <code>main.css</code> and use it in the template. Initially I started by
+simply renaming the former <code>main.css</code>, but once the process was working I was
+able to start using Less's syntax to rearrange it; leaving, crucially, one
+single, canonical definition of the three main site colours.</p>
+<p>So that's <em>one</em> of the <a href="../2015/Jul/11/meta-meadowlark.html">things I claimed I would do</a> ticked off, which
+isn't bad going!</p>
+          </div>
+        </article>
+      </aside>
+    </div>
+
+    <div class="column is-one-quarter-desktop is-one-third-tablet is-hidden-print">
+      <aside class="menu">
+<div id="mc_embed_signup">
+  <form
+      action="https://jonrshar.us15.list-manage.com/subscribe/post?u=7ada11180797f3af73228bf0b&amp;id=d172abcbd2"
+      method="post" id="mc-embedded-subscribe-form"
+      name="mc-embedded-subscribe-form" class="validate" target="_blank"
+      novalidate>
+
+    <h2 class="menu-label">Mailing List</h2>
+
+    <div id="mc_embed_signup_scroll">
+      <div class="field mc-field-group">
+        <label for="mce-EMAIL" class="label is-small">Email</label>
+        <div class="field-body">
+          <div class="field">
+            <p class="control has-icons-left">
+              <input type="email" name="EMAIL" class="input required email is-small"
+                     id="mce-EMAIL" placeholder="Email address">
+              <span class="icon is-small is-left">
+              <i class="fa fa-envelope"></i>
+            </span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="mce-FNAME" class="label is-small">Name</label>
+        <div class="field-body">
+          <div class="field is-grouped">
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="FNAME"
+                     id="mce-FNAME" placeholder="First">
+            </p>
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="LNAME"
+                     id="mce-LNAME" placeholder="Last">
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field is-grouped">
+        <p class="control">
+          <input type="submit" name="subscribe" value="Subscribe"
+                 class="button is-small is-success" id="mc-embedded-subscribe">
+        </p>
+          <p class="control">
+            <span class="help">
+              Powered by
+              <a href="http://eepurl.com/cNv6Rb"
+                 title="MailChimp - email marketing made easy and fun">
+                MailChimp
+              </a>
+            </span>
+          </p>
+      </div>
+
+      <div id="mce-responses" class="clear">
+        <div class="response help is-danger" id="mce-error-response"
+             style="display:none"></div>
+        <div class="response help is-success" id="mce-success-response"
+             style="display:none"></div>
+      </div>
+
+      <div style="position: absolute; left: -5000px;" aria-hidden="true">
+        <input type="text" name="b_7ada11180797f3af73228bf0b_d172abcbd2"
+               tabindex="-1" value="">
+      </div>
+    </div>
+  </form>
+</div>
+
+          <p class="menu-label">Other Pages</p>
+          <ul class="menu-list">
+                <li><a                        href="../pages/about.html">
+                  <span class="icon is-small"><i class="fa fa-book"></i></span>
+                  <span class="link-text">About</span>
+                </a></li>
+          </ul>
+          <p class="menu-label">Links</p>
+          <ul class="menu-list">
+              <li><a href="http://engineering.pivotal.io/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Pivotal Engineering Journal</span>
+              </a></li>
+              <li><a href="http://blog.cleancoder.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">The Clean Code Blog</span>
+              </a></li>
+              <li><a href="https://codeascraft.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Code as Craft</span>
+              </a></li>
+              <li><a href="http://corgibytes.com/blog/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Corgibytes Blog</span>
+              </a></li>
+          </ul>
+<p class="menu-label">Social</p>
+<ul class="menu-list">
+    <li><a href="https://github.com/textbook">
+      <span class="icon is-small">
+          <i class="fa fa-github fa-fw"></i>
+      </span>
+      <span class="link-text">GitHub</span>
+    </a></li>
+    <li><a href="http://stackoverflow.com/users/3001761/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-stack-overflow fa-fw"></i>
+      </span>
+      <span class="link-text">Stack Overflow</span>
+    </a></li>
+    <li><a href="https://twitter.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-twitter fa-fw"></i>
+      </span>
+      <span class="link-text">Twitter</span>
+    </a></li>
+    <li><a href="https://500px.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-500px fa-fw"></i>
+      </span>
+      <span class="link-text">500px</span>
+    </a></li>
+
+
+</ul>          <p class="menu-label">License</p>
+          
+<ul class="menu-list">
+  <li>
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      <span class="icon is-small">
+        <i class="fa fa-creative-commons fa-fw"></i>
+      </span>
+      <span>CC BY-SA 4.0</span>
+    </a>
+  </li>
+</ul>
+
+      </aside>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container has-text-centered">
+ <p class="subtitle">These are my opinions - if you don't like them, I have others</p>    <div class="credits">
+      <span><a href="https://github.com/textbook/bulrush">Bulrush</a> theme for
+        <a href="https://blog.getpelican.com/">Pelican</a></span>
+      <span><span class="icon is-small"><i class="fa fa-html5"></i></span> HTML 5</span>
+      <span><span class="icon is-small"><i class="fa fa-css3"></i></span> CSS 3</span>
+      <span>Made with <a href="https://bulma.io">Bulma</a></span>
+    </div>
+  </div>
+  <div class="github-fork-ribbon-wrapper is-hidden-mobile is-hidden-print">
+    <div class="github-fork-ribbon">
+      <a href="https://github.com/textbook/textbook.github.io-source">
+        <i class="fa fa-github fa-fw"></i>
+        Fork me on GitHub
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/javascript">
+  document.getElementById('navToggle').addEventListener('click', function () {
+    var nav = document.getElementById('navMenu');
+    var className = nav.getAttribute('class');
+    if (className == 'navbar-menu') {
+      nav.className = 'navbar-menu is-active';
+    } else {
+      nav.className = 'navbar-menu';
+    }
+  });
+</script>
+</body>
+</html>

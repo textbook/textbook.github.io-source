@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width">
+  <title>textbook - html</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <link rel="stylesheet" href="../theme/css/main.557acf99.css">
+  <style media="print">.is-hidden-print{display:none !important}</style>
+      <link rel="stylesheet" href="../custom.css">
+</head>
+
+<body id="index" class="home">
+<header class="hero is-primary">
+  <div class="hero-head">
+    <div class="container">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item title is-3"
+             href="../">textbook</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<nav class="navbar has-shadow is-hidden-print">
+  <div class="container">
+    <div class="navbar-center"></div>
+    <span id="navToggle" class="navbar-burger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+    <div id="navMenu" class="navbar-menu">
+        <div class="navbar-end">
+              <a class="navbar-item is-tab "
+                 href="../category/work.html">work</a>
+              <a class="navbar-item is-tab "
+                 href="../category/meta.html">meta</a>
+              <a class="navbar-item is-tab "
+                 href="../category/development.html">development</a>
+        </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="section columns">
+    <div class="column is-three-quarters-desktop is-two-thirds-tablet">
+      <aside id="featured" class="body">
+        <article>
+          <h1 class="title">
+            <a href="../2017/Jul/15/angular-http-client.html">New to Angular 4.3: HttpClient</a>
+          </h1>
+<footer class="post-info">
+  <abbr class="published" title="2017-07-15T20:30:00+01:00">
+    Published <span class="is-info">Sat 15 July 2017</span>
+    in <a href="../category/development.html">development</a>
+  </abbr>
+    <br />
+    <abbr class="modified" title="2017-10-13T14:40:00+01:00">
+      Updated Fri 13 October 2017
+    </abbr>
+
+    <p class="author">
+      <em>by           Jonathan Sharpe
+</em>
+      <span class="tag is-small is-rounded">
+        <a href="../tag/angular.html">angular</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../tag/html.html">html</a>
+      </span>
+    </p>
+  
+</footer>          <div class="section">
+            <p>I recently discovered from <a href="https://netbasal.com/a-taste-from-the-new-angular-http-client-38fcdc6b359b">A Taste From The New Angular HTTP Client</a> (via 
+<a href="https://www.ng-newsletter.com/">ng-newsletter</a>, which covers both Angular and AngularJS) that Angular 4.3,
+which <a href="http://angularjs.blogspot.co.uk/2017/07/angular-43-now-available.html">just became available</a>, includes a new HTTP client. </p>
+<p>So what does it add?</p>
+<ol>
+<li>
+<p><strong>JSON by default</strong> - no more <code>.map(response =&gt; response.json())</code>; unless
+    you explicitly specify e.g. <code>{ responseType: 'text' }</code> when making a
+    request, the client will automatically parse the response body as JSON for
+    you. You can still get the response, using <code>{ observe: 'response' }</code>, if
+    you need access to e.g. the headers.</p>
+</li>
+<li>
+<p><strong>Response typing</strong> - versions of the requests methods that use generic
+    types are now provided, so you can supply a type for the return value:</p>
+<div class="highlight"><pre><span></span>this.http.get&lt;Thing&gt;(&#39;/api/thing&#39;).subscribe(thing =&gt; ...)
+</pre></div>
+
+
+</li>
+<li>
+<p><strong>Interception</strong> - the new <code>HttpInterceptor</code> interface allows you to easily
+    intercept requests and responses, without needing to extend the whole
+    <code>Http</code> class yourself.</p>
+</li>
+<li>
+<p><strong>Progress reporting</strong> - specify <code>{ reportProgress: true }</code> when making a
+    request, and the client will give periodic updates on the upload or download
+    progress.</p>
+</li>
+<li>
+<p><strong>Client testing module</strong> - now you can simply add <code>HttpClientTestingModule</code>
+    to your test bed's imports, instead of setting up the <code>MockBackend</code>
+    yourself. It also provides a new API, which looks like a more synchronous
+    approach to testing.</p>
+</li>
+<li>
+<p><strong>Proper error response</strong> - as I mentioned in <a href="../2017/Apr/16/async-angular-tests.html">Testing async data in 
+    Angular</a>, it used to be tricky to test error responses (e.g. 404)
+    because the <code>mockError</code> method took an <code>Error</code>, not a <code>Response</code>. As a
+    workaround, I showed how to create a new class that combines the two.
+    However, that's now provided as part of the module:</p>
+<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="kr">class</span> <span class="nx">HttpErrorResponse</span> <span class="kr">extends</span> <span class="nx">HttpResponseBase</span> <span class="kr">implements</span> <span class="nb">Error</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</pre></div>
+
+
+<p>Hopefully this will make error handling neater and testing easier.</p>
+</li>
+</ol>
+<p>As I'd also been playing with <a href="https://material.angular.io/"><code>@angular/material</code></a>, I thought I'd combine 3
+and 4 to create an automatically-updated progress bar, which shows the progress
+of the current request. First, I had to write an interceptor:</p>
+<div class="highlight"><pre><span></span><span class="kd">@Injectable</span><span class="p">()</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ProgressInterceptor</span> <span class="kr">implements</span> <span class="nx">HttpInterceptor</span> <span class="p">{</span>
+  <span class="kr">public</span> <span class="nx">progress$</span>: <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">number</span> <span class="o">|</span> <span class="kc">null</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="kr">private</span> <span class="nx">progressSubject</span>: <span class="kt">Subject</span><span class="o">&lt;</span><span class="kt">number</span> <span class="o">|</span> <span class="kc">null</span><span class="o">&gt;</span><span class="p">;</span>
+
+  <span class="kr">constructor</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">progressSubject</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ReplaySubject</span><span class="o">&lt;</span><span class="kt">number</span> <span class="o">|</span> <span class="kc">null</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">progress$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">progressSubject</span><span class="p">.</span><span class="nx">asObservable</span><span class="p">();</span>
+  <span class="p">}</span>
+
+  <span class="nx">intercept</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">req</span>: <span class="kt">HttpRequest</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="nx">next</span>: <span class="kt">HttpHandler</span><span class="p">)</span><span class="o">:</span> <span class="nx">Observable</span><span class="o">&lt;</span><span class="nx">HttpEvent</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+    <span class="kr">const</span> <span class="nx">reportingRequest</span> <span class="o">=</span> <span class="nx">req</span><span class="p">.</span><span class="nx">clone</span><span class="p">({</span> <span class="nx">reportProgress</span>: <span class="kt">true</span> <span class="p">});</span>
+    <span class="kr">const</span> <span class="nx">handle</span> <span class="o">=</span> <span class="nx">next</span><span class="p">.</span><span class="nx">handle</span><span class="p">(</span><span class="nx">reportingRequest</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nx">handle</span><span class="p">.</span><span class="k">do</span><span class="p">((</span><span class="nx">event</span>: <span class="kt">HttpEvent</span><span class="o">&lt;</span><span class="nx">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">switch</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">case</span> <span class="nx">HttpEventType.Sent</span>:
+          <span class="kt">this.progressSubject.next</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+          <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="nx">HttpEventType.DownloadProgress</span>:
+        <span class="kt">case</span> <span class="nx">HttpEventType.UploadProgress</span>:
+          <span class="kt">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">total</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">progressSubject</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">round</span><span class="p">((</span><span class="nx">event</span><span class="p">.</span><span class="nx">loaded</span> <span class="o">/</span> <span class="nx">event</span><span class="p">.</span><span class="nx">total</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">));</span>
+          <span class="p">}</span>
+          <span class="k">break</span><span class="p">;</span>
+        <span class="k">case</span> <span class="nx">HttpEventType.Response</span>:
+          <span class="kt">this.progressSubject.next</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+          <span class="k">break</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>This does two main things:</p>
+<ul>
+<li>
+<p><code>.clone</code> the request object, setting the progress reporting flag. Most of
+    the objects in the client are immutable, but provide helper methods to
+    create new instances with updated configuration.</p>
+</li>
+<li>
+<p><code>.subscribe</code> to the events coming out of the handler. It switches on the
+    type of the event to determine the start of the request, progress updates
+    and the arrival of the response. At each step it sends updates using the 
+    <em>"public observable, private subject"</em> pattern I discussed in <a href="../2017/Apr/09/async-angular-data.html">Handling
+    data with the Angular AsyncPipe</a>.</p>
+</li>
+</ul>
+<p>I then wrote a simple wrapper around the <a href="https://material.angular.io/components/progress-bar"><code>&lt;md-progress-bar&gt;</code></a>, exposing its
+basic styling while hiding the other details of the API (the <a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#string-literal-types">string literal
+types</a> for mode and colour are defined in but not exposed by the Angular
+Material package, so I recreated them):</p>
+<div class="highlight"><pre><span></span><span class="kr">export</span> <span class="nx">type</span> <span class="nx">ProgressBarColor</span> <span class="o">=</span> <span class="s1">&#39;primary&#39;</span> <span class="o">|</span> <span class="s1">&#39;accent&#39;</span> <span class="o">|</span> <span class="s1">&#39;warn&#39;</span><span class="p">;</span>
+
+<span class="nx">type</span> <span class="nx">ProgressBarMode</span> <span class="o">=</span> <span class="s1">&#39;determinate&#39;</span> <span class="o">|</span> <span class="s1">&#39;indeterminate&#39;</span> <span class="o">|</span> <span class="s1">&#39;buffer&#39;</span> <span class="o">|</span> <span class="s1">&#39;query&#39;</span><span class="p">;</span>
+
+<span class="kd">@Component</span><span class="p">({</span>
+  <span class="nx">selector</span><span class="o">:</span> <span class="s1">&#39;pgs-progress-bar&#39;</span><span class="p">,</span>
+  <span class="nx">template</span><span class="o">:</span> <span class="sb">`</span>
+<span class="sb">    &lt;md-progress-bar [value]=&quot;progressPercentage$ | async&quot;</span>
+<span class="sb">                     [color]=&quot;color&quot;&gt;</span>
+<span class="sb">    &lt;/md-progress-bar&gt;</span>
+<span class="sb">  `</span><span class="p">,</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ProgressComponent</span> <span class="kr">implements</span> <span class="nx">OnInit</span> <span class="p">{</span>
+  <span class="kd">@Input</span><span class="p">()</span> <span class="nx">color</span>: <span class="kt">ProgressBarColor</span> <span class="o">=</span> <span class="s1">&#39;primary&#39;</span><span class="p">;</span>
+
+  <span class="kd">@ViewChild</span><span class="p">(</span><span class="nx">MdProgressBar</span><span class="p">)</span> <span class="kr">private</span> <span class="nx">progressBar</span>: <span class="kt">MdProgressBar</span><span class="p">;</span>
+
+  <span class="nx">progressPercentage$</span>: <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">number</span><span class="o">&gt;</span><span class="p">;</span>
+
+  <span class="kr">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">interceptor</span>: <span class="kt">ProgressInterceptor</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+  <span class="nx">ngOnInit() {</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">progressPercentage$</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">interceptor</span><span class="p">.</span><span class="nx">progress$</span>
+        <span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">progress</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">progress</span> <span class="o">===</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setMode</span><span class="p">(</span><span class="s1">&#39;indeterminate&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setMode</span><span class="p">(</span><span class="s1">&#39;determinate&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">progress</span><span class="p">;</span>
+          <span class="p">}</span>
+        <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="kr">private</span> <span class="nx">setMode</span><span class="p">(</span><span class="nx">mode</span>: <span class="kt">ProgressBarMode</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">progressBar</span><span class="p">.</span><span class="nx">mode</span> <span class="o">=</span> <span class="nx">mode</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>This puts the progress bar into "indeterminate" mode, where it just shows that
+<em>something</em> is going on, if it receives <code>null</code> from the interceptor. If it
+receives a number, that's used as the value for current progress and the bar is
+switched into "determinate" mode, where it fills up from 0 to 100.</p>
+<p>Finally I wrote a module to glue the two classes together and add the actual
+Angular Material progress bar:</p>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">interceptor</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ProgressInterceptor</span><span class="p">();</span>
+
+<span class="kd">@NgModule</span><span class="p">({</span>
+  <span class="nx">imports</span><span class="o">:</span> <span class="p">[</span>
+    <span class="nx">BrowserModule</span><span class="p">,</span>
+    <span class="nx">HttpClientModule</span><span class="p">,</span>
+    <span class="nx">MdProgressBarModule</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="nx">declarations</span><span class="o">:</span> <span class="p">[</span>
+    <span class="nx">ProgressComponent</span><span class="p">,</span>
+  <span class="p">],</span>
+  <span class="nx">providers</span><span class="o">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="nx">provide</span>: <span class="kt">ProgressInterceptor</span><span class="p">,</span> <span class="nx">useValue</span>: <span class="kt">interceptor</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="nx">provide</span>: <span class="kt">HTTP_INTERCEPTORS</span><span class="p">,</span> <span class="nx">useValue</span>: <span class="kt">interceptor</span><span class="p">,</span> <span class="nx">multi</span>: <span class="kt">true</span> <span class="p">},</span>
+  <span class="p">],</span>
+  <span class="nx">exports</span><span class="o">:</span> <span class="p">[</span>
+    <span class="nx">ProgressComponent</span><span class="p">,</span>
+  <span class="p">]</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">ProgressModule</span> <span class="p">{</span> <span class="p">}</span>
+</pre></div>
+
+
+<p>Note that I create a single instance of the interceptor, which is then both
+used in the <code>HTTP_INTERCEPTORS</code> array and provided directly under its own name.
+If I'd used <code>useClass: ProgressInterceptor</code> then the client would have been
+using a different instance from the one in the component, and the progress bar
+would never get updated.</p>
+<p>Now you can drop <code>&lt;pgs-progress-bar&gt;&lt;/pgs-progress-bar&gt;</code> anywhere into the
+application and it will show the status of the latest request made through the
+<code>HttpClient</code>, with no need for any additional wiring. You can also inject the
+<code>ProgressInterceptor</code> into anything else that needs to keep track of request
+progress.</p>
+<p>This is just a toy implementation (one obvious issue: what if there are two
+parallel requests?) but hopefully shows what's possible with the new API. Note
+that the old client (in <code>@angular/http</code>) isn't going away just yet; the new one
+is available in parallel (in <code>@angular/common/http</code>) for the time being.</p>
+<blockquote>
+<p><strong>Update</strong>: an earlier version of this article both subscribed to <em>and</em> 
+returned the <code>handle</code> from the interceptor - as VerSo pointed out in the 
+comments (thanks!), this would mean that the request got made twice.</p>
+</blockquote>
+          </div>
+        </article>
+      </aside>
+  <div class="is-hidden-print">
+    <h2 class="subtitle">Other articles</h2>
+    <div class="columns is-multiline">
+        <div class="column is-half-tablet is-one-third-desktop">
+          <div class="card is-fullwidth is-fullheight">
+            <div class="card-content">
+              <a href="../2017/May/29/angular-ng-template-outlet.html">
+                <h3 class="title is-5">ngTemplateOutlet tricks</h3>
+                <div class="heading subtitle">Mon 29 May 2017</div>
+                <div><p>Using an Angular ngTemplateOutlet to bind child content from the parent template.</p></div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-third-desktop">
+          <div class="card is-fullwidth is-fullheight">
+            <div class="card-content">
+              <a href="../2017/May/20/angular-ng-elements.html">
+                <h3 class="title is-5">Angular's "ng-" elements</h3>
+                <div class="heading subtitle">Sat 20 May 2017</div>
+                <div><p>A quick spotters' guide to some of the "ng-" elements that Angular provides.</p></div>
+              </a>
+            </div>
+          </div>
+        </div>
+    </div>
+<nav class="pagination is-centered">
+    <a class="pagination-previous" href="#" disabled>
+      Previous
+    </a>
+    <a class="pagination-next" href="#" disabled>
+      Next page
+    </a>
+  <ul class="pagination-list">
+    <li>Page 1 / 1</li>
+  </ul>
+</nav>
+<br>  </div>
+    </div>
+
+    <div class="column is-one-quarter-desktop is-one-third-tablet is-hidden-print">
+      <aside class="menu">
+<div id="mc_embed_signup">
+  <form
+      action="https://jonrshar.us15.list-manage.com/subscribe/post?u=7ada11180797f3af73228bf0b&amp;id=d172abcbd2"
+      method="post" id="mc-embedded-subscribe-form"
+      name="mc-embedded-subscribe-form" class="validate" target="_blank"
+      novalidate>
+
+    <h2 class="menu-label">Mailing List</h2>
+
+    <div id="mc_embed_signup_scroll">
+      <div class="field mc-field-group">
+        <label for="mce-EMAIL" class="label is-small">Email</label>
+        <div class="field-body">
+          <div class="field">
+            <p class="control has-icons-left">
+              <input type="email" name="EMAIL" class="input required email is-small"
+                     id="mce-EMAIL" placeholder="Email address">
+              <span class="icon is-small is-left">
+              <i class="fa fa-envelope"></i>
+            </span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="mce-FNAME" class="label is-small">Name</label>
+        <div class="field-body">
+          <div class="field is-grouped">
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="FNAME"
+                     id="mce-FNAME" placeholder="First">
+            </p>
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="LNAME"
+                     id="mce-LNAME" placeholder="Last">
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field is-grouped">
+        <p class="control">
+          <input type="submit" name="subscribe" value="Subscribe"
+                 class="button is-small is-success" id="mc-embedded-subscribe">
+        </p>
+          <p class="control">
+            <span class="help">
+              Powered by
+              <a href="http://eepurl.com/cNv6Rb"
+                 title="MailChimp - email marketing made easy and fun">
+                MailChimp
+              </a>
+            </span>
+          </p>
+      </div>
+
+      <div id="mce-responses" class="clear">
+        <div class="response help is-danger" id="mce-error-response"
+             style="display:none"></div>
+        <div class="response help is-success" id="mce-success-response"
+             style="display:none"></div>
+      </div>
+
+      <div style="position: absolute; left: -5000px;" aria-hidden="true">
+        <input type="text" name="b_7ada11180797f3af73228bf0b_d172abcbd2"
+               tabindex="-1" value="">
+      </div>
+    </div>
+  </form>
+</div>
+
+          <p class="menu-label">Other Pages</p>
+          <ul class="menu-list">
+                <li><a                        href="../pages/about.html">
+                  <span class="icon is-small"><i class="fa fa-book"></i></span>
+                  <span class="link-text">About</span>
+                </a></li>
+          </ul>
+          <p class="menu-label">Links</p>
+          <ul class="menu-list">
+              <li><a href="http://engineering.pivotal.io/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Pivotal Engineering Journal</span>
+              </a></li>
+              <li><a href="http://blog.cleancoder.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">The Clean Code Blog</span>
+              </a></li>
+              <li><a href="https://codeascraft.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Code as Craft</span>
+              </a></li>
+              <li><a href="http://corgibytes.com/blog/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Corgibytes Blog</span>
+              </a></li>
+          </ul>
+<p class="menu-label">Social</p>
+<ul class="menu-list">
+    <li><a href="https://github.com/textbook">
+      <span class="icon is-small">
+          <i class="fa fa-github fa-fw"></i>
+      </span>
+      <span class="link-text">GitHub</span>
+    </a></li>
+    <li><a href="http://stackoverflow.com/users/3001761/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-stack-overflow fa-fw"></i>
+      </span>
+      <span class="link-text">Stack Overflow</span>
+    </a></li>
+    <li><a href="https://twitter.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-twitter fa-fw"></i>
+      </span>
+      <span class="link-text">Twitter</span>
+    </a></li>
+    <li><a href="https://500px.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-500px fa-fw"></i>
+      </span>
+      <span class="link-text">500px</span>
+    </a></li>
+
+
+</ul>          <p class="menu-label">License</p>
+          
+<ul class="menu-list">
+  <li>
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      <span class="icon is-small">
+        <i class="fa fa-creative-commons fa-fw"></i>
+      </span>
+      <span>CC BY-SA 4.0</span>
+    </a>
+  </li>
+</ul>
+
+      </aside>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container has-text-centered">
+ <p class="subtitle">These are my opinions - if you don't like them, I have others</p>    <div class="credits">
+      <span><a href="https://github.com/textbook/bulrush">Bulrush</a> theme for
+        <a href="https://blog.getpelican.com/">Pelican</a></span>
+      <span><span class="icon is-small"><i class="fa fa-html5"></i></span> HTML 5</span>
+      <span><span class="icon is-small"><i class="fa fa-css3"></i></span> CSS 3</span>
+      <span>Made with <a href="https://bulma.io">Bulma</a></span>
+    </div>
+  </div>
+  <div class="github-fork-ribbon-wrapper is-hidden-mobile is-hidden-print">
+    <div class="github-fork-ribbon">
+      <a href="https://github.com/textbook/textbook.github.io-source">
+        <i class="fa fa-github fa-fw"></i>
+        Fork me on GitHub
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/javascript">
+  document.getElementById('navToggle').addEventListener('click', function () {
+    var nav = document.getElementById('navMenu');
+    var className = nav.getAttribute('class');
+    if (className == 'navbar-menu') {
+      nav.className = 'navbar-menu is-active';
+    } else {
+      nav.className = 'navbar-menu';
+    }
+  });
+</script>
+</body>
+</html>

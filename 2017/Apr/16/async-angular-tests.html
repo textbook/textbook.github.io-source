@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width">
+  <title>Testing async data in Angular</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <link rel="stylesheet" href="../../../theme/css/main.557acf99.css">
+  <style media="print">.is-hidden-print{display:none !important}</style>
+      <link rel="stylesheet" href="../../../custom.css">
+<meta property="og:title" content="textbook - Testing async data in Angular">
+  <meta property="og:description" content="Using the Angular TestBed to test asynchronous API data manipulation.">
+<meta property="og:url" content="../../../2017/Apr/16/async-angular-tests.html">
+    <meta property="og:image" content="../../../images/avatar.png">
+    <meta name="twitter:image:alt" content="textbook | These are my opinions - if you don't like them, I have others">
+<meta name="twitter:card" content="summary">
+  <meta name="twitter:creator" content="@jonrsharpe">
+  <meta name="twitter:site" content="@jonrsharpe">
+<meta property="og:site_name" content="textbook">
+<meta property="og:type" content="article">
+  <meta property="article:published_time" content="2017-04-16T15:00:00+01:00">
+  <meta property="article:modified_time" content="2017-07-15T20:30:00+01:00">
+    <meta property="article:tag" content="code">
+    <meta property="article:tag" content="angular">
+    <meta property="article:tag" content="typescript">
+    <meta property="article:tag" content="rxjs">
+    <meta property="article:tag" content="tdd">
+  <meta property="article:section" content="development">
+</head>
+
+<body id="index" class="home">
+<header class="hero is-primary">
+  <div class="hero-head">
+    <div class="container">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item title is-3"
+             href="../../../">textbook</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<nav class="navbar has-shadow is-hidden-print">
+  <div class="container">
+    <div class="navbar-center"></div>
+    <span id="navToggle" class="navbar-burger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+    <div id="navMenu" class="navbar-menu">
+        <div class="navbar-end">
+              <a class="navbar-item is-tab "
+                 href="../../../category/work.html">work</a>
+              <a class="navbar-item is-tab "
+                 href="../../../category/meta.html">meta</a>
+              <a class="navbar-item is-tab is-active"
+                 href="../../../category/development.html">development</a>
+        </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="section columns">
+    <div class="column is-three-quarters-desktop is-two-thirds-tablet">
+<section id="content" class="body">
+  <article>
+    <h1 class="title">
+      <a href="../../../2017/Apr/16/async-angular-tests.html" rel="bookmark"
+         title="Permalink to Testing async data in Angular">Testing async data in Angular</a></h1>
+<footer class="post-info">
+  <abbr class="published" title="2017-04-16T15:00:00+01:00">
+    Published <span class="is-info">Sun 16 April 2017</span>
+    in <a href="../../../category/development.html">development</a>
+  </abbr>
+    <br />
+    <abbr class="modified" title="2017-07-15T20:30:00+01:00">
+      Updated Sat 15 July 2017
+    </abbr>
+
+    <p class="author">
+      <em>by           Jonathan Sharpe
+</em>
+      <span class="tag is-small is-rounded">
+        <a href="../../../tag/code.html">code</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../../../tag/angular.html">angular</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../../../tag/typescript.html">typescript</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../../../tag/rxjs.html">rxjs</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../../../tag/tdd.html">tdd</a>
+      </span>
+    </p>
+  
+</footer>    <div class="section"><blockquote>
+<p>This post is a follow up to <a href="../../../2017/Apr/09/async-angular-data.html">Handling data with the Angular AsyncPipe</a>, 
+and assumes you're familiar with the service and component used there.</p>
+</blockquote>
+<p>In a previous article I outlined a way to use the asynchronous nature of 
+<code>Http</code>-based services to handle streams of data right through to the template. 
+One of the core practices of the Extreme Programming methodology we use at 
+Pivotal is test-driven development (TDD), so I thought it would also be helpful 
+to show how we've approached writing our tests.</p>
+<p>Angular comes with some useful built-in functionality to enable testing; see 
+<a href="https://angular.io/docs/ts/latest/guide/testing.html">their article</a> on the subject for more information. We're also using 
+Jasmine's <a href="https://jasmine.github.io/2.5/introduction#section-Asynchronous_Support">asynchronous support</a>, calling <code>done()</code> to explicitly define when
+a test is considered finished.</p>
+<h2>Testing the service</h2>
+<p>Angular includes a <a href="https://angular.io/docs/ts/latest/api/http/testing/index/MockBackend-class.html"><code>MockBackend</code></a> that we can inject into the <code>Http</code>
+created for the service to give access to the connections it's creating,
+exposing an interface for testing and isolating tests from the actual network.</p>
+<div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;RandomUserService&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">service</span>: <span class="kt">RandomUserService</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">backend</span>: <span class="kt">MockBackend</span><span class="p">;</span>
+
+  <span class="nx">beforeEach</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">TestBed</span><span class="p">.</span><span class="nx">configureTestingModule</span><span class="p">({</span>
+      <span class="nx">providers</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span> <span class="nx">provide</span>: <span class="kt">ConnectionBackend</span><span class="p">,</span> <span class="nx">useClass</span>: <span class="kt">MockBackend</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="nx">provide</span>: <span class="kt">RequestOptions</span><span class="p">,</span> <span class="nx">useClass</span>: <span class="kt">BaseRequestOptions</span> <span class="p">},</span>
+        <span class="nx">Http</span><span class="p">,</span>
+        <span class="nx">RandomUserService</span><span class="p">,</span>
+      <span class="p">],</span>
+    <span class="p">});</span>
+
+    <span class="nx">service</span> <span class="o">=</span> <span class="nx">TestBed</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">RandomUserService</span><span class="p">);</span>
+    <span class="nx">backend</span> <span class="o">=</span> <span class="nx">TestBed</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ConnectionBackend</span><span class="p">);</span>
+  <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should make a GET to the API on fetch&#39;</span><span class="p">,</span> <span class="nx">done</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">backend</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">connection</span>: <span class="kt">MockConnection</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">connection</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">url</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;https://randomuser.me/api/&#39;</span><span class="p">);</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">connection</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">method</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">RequestMethod</span><span class="p">.</span><span class="nx">Get</span><span class="p">,</span> <span class="s1">&#39;expected GET request&#39;</span><span class="p">);</span>
+      <span class="nx">done</span><span class="p">();</span>
+    <span class="p">});</span>
+
+    <span class="nx">service</span><span class="p">.</span><span class="nx">fetchRandomUser</span><span class="p">();</span>
+  <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should expose the first result from the response&#39;</span><span class="p">,</span> <span class="nx">done</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">expectedUser</span> <span class="o">=</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span> <span class="p">{</span> <span class="nx">first</span><span class="o">:</span> <span class="s1">&#39;Alice&#39;</span> <span class="p">}</span> <span class="p">};</span>
+
+    <span class="nx">backend</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">connection</span>: <span class="kt">MockConnection</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">connection</span><span class="p">.</span><span class="nx">mockRespond</span><span class="p">(</span><span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="k">new</span> <span class="nx">ResponseOptions</span><span class="p">({</span>
+        <span class="nx">status</span>: <span class="kt">200</span><span class="p">,</span>
+        <span class="nx">body</span><span class="o">:</span> <span class="p">{</span> <span class="nx">results</span><span class="o">:</span> <span class="p">[</span><span class="nx">expectedUser</span><span class="p">]</span> <span class="p">},</span>
+      <span class="p">})));</span>
+    <span class="p">});</span>
+
+    <span class="nx">service</span><span class="p">.</span><span class="nx">fetchRandomUser</span><span class="p">();</span>
+
+    <span class="nx">service</span><span class="p">.</span><span class="nx">randomUser$</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">user</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">expect</span><span class="p">(</span><span class="nx">user</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">expectedUser</span><span class="p">);</span>
+      <span class="nx">done</span><span class="p">();</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>This allows us to test both:</p>
+<ol>
+<li>
+<p><em>That the request is correct</em>: we can check the URL, request method and 
+    other properties to ensure that the settings are correct. Note the 
+    non-default message on the method assertion; <code>RequestMethod</code> is an enum, 
+    and e.g. <em>"Expected 0 to be 1."</em> isn't a very useful failure message.</p>
+</li>
+<li>
+<p><em>That the response handling is correct</em>: in this case, that the first
+    entry in the response JSON's <code>results</code> value is exposed over the 
+    observable.</p>
+</li>
+</ol>
+<p>Note another advantage of the subject/observable formulation over the original
+version here; as the subscription to <code>http.get(...)</code> happens inside the fetch
+method, you don't need to subscribe to the result in the first test, where the
+response is irrelevant. In cases where the request observable is returned from 
+the service, <em>no request is made</em> unless the caller subscribes to it; GET is a
+cold observable (however e.g. POST and PUT are hot, so you don't need to
+subscribe unless you are actually interested in the result).</p>
+<h2>Testing the component</h2>
+<p>As components include templates, which must be compiled, the testing is 
+slightly more complex. The compilation is asynchronous, so the 
+<a href="https://cli.angular.io/">Angular CLI</a> creates components with a test setup like the following: two
+<code>beforeEach</code> calls, one with <code>async</code> to run the compilation, then a second
+synchronous call where the fixture is created.</p>
+<div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;RandomUserComponent&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">component</span>: <span class="kt">RandomUserComponent</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">fixture</span>: <span class="kt">ComponentFixture</span><span class="o">&lt;</span><span class="nx">RandomUserComponent</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">serviceSpy</span>: <span class="kt">RandomUserService</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">userSubject</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ReplaySubject</span><span class="o">&lt;</span><span class="nx">User</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+  <span class="nx">beforeEach</span><span class="p">(</span><span class="nx">async</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">serviceSpy</span> <span class="o">=</span> <span class="nx">jasmine</span><span class="p">.</span><span class="nx">createSpyObj</span><span class="p">(</span><span class="s1">&#39;RandomUserService&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;fetchRandomUser&#39;</span><span class="p">]);</span>
+    <span class="nx">serviceSpy</span><span class="p">.</span><span class="nx">randomUser$</span> <span class="o">=</span> <span class="nx">userSubject</span><span class="p">.</span><span class="nx">asObservable</span><span class="p">();</span>
+
+    <span class="nx">TestBed</span><span class="p">.</span><span class="nx">configureTestingModule</span><span class="p">({</span>
+      <span class="nx">providers</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span> <span class="nx">provide</span>: <span class="kt">RandomUserService</span><span class="p">,</span> <span class="nx">useValue</span>: <span class="kt">serviceSpy</span> <span class="p">},</span>
+      <span class="p">],</span>
+      <span class="nx">declarations</span><span class="o">:</span> <span class="p">[</span><span class="nx">RandomUserComponent</span><span class="p">],</span>
+    <span class="p">}).</span><span class="nx">compileComponents</span><span class="p">();</span>
+  <span class="p">}));</span>
+
+  <span class="nx">beforeEach</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">fixture</span> <span class="o">=</span> <span class="nx">TestBed</span><span class="p">.</span><span class="nx">createComponent</span><span class="p">(</span><span class="nx">RandomUserComponent</span><span class="p">);</span>
+    <span class="nx">component</span> <span class="o">=</span> <span class="nx">fixture</span><span class="p">.</span><span class="nx">componentInstance</span><span class="p">;</span>
+    <span class="nx">fixture</span><span class="p">.</span><span class="nx">detectChanges</span><span class="p">();</span>
+  <span class="p">});</span>
+
+  <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should fetch and render a random user&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">firstName</span> <span class="o">=</span> <span class="s1">&#39;Alice&#39;</span><span class="p">;</span>
+    <span class="nx">userSubject</span><span class="p">.</span><span class="nx">next</span><span class="p">({</span> <span class="nx">name</span><span class="o">:</span> <span class="p">{</span> <span class="nx">first</span>: <span class="kt">firstName</span> <span class="p">}</span> <span class="p">});</span>
+    <span class="nx">fixture</span><span class="p">.</span><span class="nx">detectChanges</span><span class="p">();</span>
+
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">serviceSpy</span><span class="p">.</span><span class="nx">fetchRandomUser</span><span class="p">).</span><span class="nx">toHaveBeenCalled</span><span class="p">();</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">fixture</span><span class="p">.</span><span class="nx">nativeElement</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;span&#39;</span><span class="p">).</span><span class="nx">innerText</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="nx">firstName</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>Note that the subject/observable usage in the test mirrors that in the actual
+service implementation; this means that new data can be pushed into the test at 
+any time. You can also do this when setting up tests for the original version
+of the service:</p>
+<div class="highlight"><pre><span></span><span class="nx">service</span> <span class="o">=</span> <span class="nx">jasmine</span><span class="p">.</span><span class="nx">createSpyObj</span><span class="p">(</span><span class="s1">&#39;RandomUserService&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;getRandomUser&#39;</span><span class="p">]);</span>
+<span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nx">getRandomUser</span> <span class="kr">as</span> <span class="nx">Spy</span><span class="p">).</span><span class="nx">and</span><span class="p">.</span><span class="nx">returnValue</span><span class="p">(</span><span class="nx">userSubject</span><span class="p">.</span><span class="nx">asObservable</span><span class="p">());</span>
+</pre></div>
+
+
+<p>In both cases making the <code>service</code> explicitly typed as a <code>RandomUserService</code> 
+means that the IDE and compiler can tell us if the wrong field and method names 
+are used; e.g. if I'd mistyped the assignment of the observable:</p>
+<div class="highlight"><pre><span></span><span class="n">TS2339</span><span class="o">:</span> <span class="n">Property</span> <span class="s1">&#39;randomUsers$&#39;</span> <span class="n">does</span> <span class="n">not</span> <span class="n">exist</span> <span class="n">on</span> <span class="n">type</span> <span class="s1">&#39;RandomUserService&#39;</span><span class="o">.</span>
+</pre></div>
+
+
+<h2>Testing more complex components</h2>
+<p>The nice things about the <code>TestBed</code> and <code>ComponentFixture</code> model are that it 
+allows us to:</p>
+<ol>
+<li>
+<p><em>Be very specific about the dependencies of our components</em>: its hooks into
+    dependency injection system allow use to provide test doubles as required, 
+    and either:</p>
+<ul>
+<li>
+<p>explicitly provide required sub-components (real or fake) to test 
+   interactions; or </p>
+</li>
+<li>
+<p>use the <code>NO_ERRORS_SCHEMA</code> to ignore missing sub-components and test a 
+   single component in isolation.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><em>Test interactions between the class and template</em>: it exposes the 
+    interface between the two parts of the component. For example, imagine the 
+    following component:</p>
+<div class="highlight"><pre><span></span><span class="kd">@Component</span><span class="p">({</span>
+  <span class="nx">selector</span><span class="o">:</span> <span class="s1">&#39;fetch-trigger&#39;</span><span class="p">,</span>
+  <span class="nx">template</span><span class="o">:</span> <span class="s1">&#39;&lt;button (click)=&quot;triggerFetch()&quot;&gt;&lt;/button&gt;&#39;</span><span class="p">,</span>
+<span class="p">})</span>
+<span class="kr">export</span> <span class="kr">class</span> <span class="nx">FetchTriggerComponent</span> <span class="p">{</span>
+  <span class="kr">constructor</span><span class="p">(</span><span class="kr">private</span> <span class="nx">service</span>: <span class="kt">RandomUserService</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+
+  <span class="nx">triggerFetch() {</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">service</span><span class="p">.</span><span class="nx">fetchRandomUser</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>It's pretty straightforward to unit test that calling the <code>triggerFetch</code> 
+method invokes the appropriate service method, but given a correctly 
+configured <code>TestBed</code> you can also test that clicking the button in the HTML 
+calls <code>triggerFetch</code>. Better still, to write a test less tied to the 
+current implementation, you can test <em>across</em> the boundary that clicking 
+the button calls <code>fetchRandomUser</code> on a stub of the service.</p>
+<div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should fetch a random user when the button is clicked&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">component</span><span class="p">.</span><span class="nx">nativeElement</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;button&#39;</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">serviceSpy</span><span class="p">.</span><span class="nx">fetchRandomUser</span><span class="p">).</span><span class="nx">toHaveBeenCalled</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+
+</li>
+</ol>
+<h2>Testing service error handling</h2>
+<p>One gotcha we've come across is with handling 4xx and 5xx response status codes 
+in <code>Http</code>-based services. Introducing error handling into the component is as 
+simple as providing the second callback to subscribe:</p>
+<div class="highlight"><pre><span></span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span>
+    <span class="nx">user</span> <span class="o">=&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">userSubject</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">user</span><span class="p">),</span>
+    <span class="nx">error</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">error</span> <span class="k">instanceof</span> <span class="nx">Response</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">errorSubject</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">);</span>
+</pre></div>
+
+
+<p>Naïvely, you might think that testing it is a simple matter of responding from 
+the mock backend with an error code:</p>
+<div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should expose errors&#39;</span><span class="p">,</span> <span class="nx">done</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">service</span><span class="p">.</span><span class="nx">error$</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">status</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">status</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">404</span><span class="p">);</span>
+    <span class="nx">done</span><span class="p">();</span>
+  <span class="p">});</span>
+
+  <span class="nx">backend</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">connection</span>: <span class="kt">MockConnection</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">connection</span><span class="p">.</span><span class="nx">mockResponse</span><span class="p">(</span><span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="k">new</span> <span class="nx">ResponseOptions</span><span class="p">({</span>
+      <span class="nx">status</span>: <span class="kt">404</span><span class="p">,</span>
+    <span class="p">})));</span>
+  <span class="p">});</span>
+
+  <span class="nx">service</span><span class="p">.</span><span class="nx">fetchRandomUser</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p><em>(Note that, as we're not using a <code>ReplaySubject</code> for errors to avoid 
+replaying them after the fact, you need to <code>.subscribe</code> </em>before<em> triggering the 
+response.)</em> </p>
+<p>However, this will end with:</p>
+<div class="highlight"><pre><span></span><span class="n">Error</span><span class="o">:</span> <span class="n">Timeout</span> <span class="o">-</span> <span class="n">Async</span> <span class="n">callback</span> <span class="n">was</span> <span class="n">not</span> <span class="n">invoked</span> <span class="n">within</span> <span class="n">timeout</span> <span class="n">specified</span> <span class="n">by</span> <span class="n">jasmine</span><span class="o">.</span><span class="na">DEFAULT_TIMEOUT_INTERVAL</span><span class="o">.</span>
+</pre></div>
+
+
+<p>Instead, you may try to use another method on the connection: <code>mockError</code>. This 
+time the TypeScript compiler has something to say:</p>
+<div class="highlight"><pre><span></span><span class="n">TS2345</span><span class="o">:</span> <span class="n">Argument</span> <span class="n">of</span> <span class="n">type</span> <span class="s1">&#39;Response&#39;</span> <span class="k">is</span> <span class="n">not</span> <span class="n">assignable</span> <span class="n">to</span> <span class="n">type</span> <span class="s1">&#39;Error&#39;</span><span class="o">.</span>
+</pre></div>
+
+
+<p>It turns out that, unlike <code>mockRespond</code> and <code>mockDownload</code>, the <code>mockError</code> 
+method takes an <code>Error</code> rather than a <code>Response</code>. In practice, however, the
+<code>error</code> on the second subscribe callback is <code>any</code>, and will be a <code>Response</code>
+in the case of a 4xx or 5xx response code. To get around this, you can adopt
+the suggestion from <a href="https://github.com/angular/angular/pull/8961#issuecomment-251549757">this comment on the Angular GitHub repo</a>:</p>
+<div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">MockError</span> <span class="kr">extends</span> <span class="nx">Response</span> <span class="kr">implements</span> <span class="nb">Error</span> <span class="p">{</span>
+    <span class="nx">name</span>: <span class="kt">any</span><span class="p">;</span>
+    <span class="nx">message</span>: <span class="kt">any</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>which allows you to call <code>mockError</code> and still test for <code>Response</code> in the error
+callback in the service:</p>
+<div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should expose errors&#39;</span><span class="p">,</span> <span class="nx">done</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">service</span><span class="p">.</span><span class="nx">error$</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">status</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">status</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mi">404</span><span class="p">);</span>
+    <span class="nx">done</span><span class="p">();</span>
+  <span class="p">});</span>
+
+  <span class="nx">backend</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">connection</span>: <span class="kt">MockConnection</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">connection</span><span class="p">.</span><span class="nx">mockError</span><span class="p">(</span><span class="k">new</span> <span class="nx">MockError</span><span class="p">(</span><span class="k">new</span> <span class="nx">ResponseOptions</span><span class="p">({</span>
+      <span class="nx">status</span>: <span class="kt">404</span><span class="p">,</span>
+    <span class="p">})));</span>
+  <span class="p">});</span>
+
+  <span class="nx">service</span><span class="p">.</span><span class="nx">fetchRandomUser</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>There are a few open issues related to this behaviour, so hopefully it will be 
+fixed at some point in the near future.</p>
+<blockquote>
+<p><strong>Update</strong>: as of 4.3.0 the new <code>HttpClient</code> module seems to deal with this
+more neatly, providing an official equivalent of <code>MockError</code>; see <a href="../../../2017/Jul/15/angular-http-client.html">New to
+Angular 4.3: HttpClient</a> for more information.</p>
+</blockquote></div>
+
+  </article>
+</section>
+
+<script type="application/ld+json">
+  {"articleSection": "development", "author": {"@type": "Person", "name": "Jonathan Sharpe"}, "datePublished": "2017-04-16T15:00:00+01:00", "headline": "Testing async data in Angular", "mainEntityOfPage": {"@type": "WebPage", "@id": "../../../2017/Apr/16/async-angular-tests.html"}, "@context": "http://schema.org", "@type": "BlogPosting", "dateModified": "2017-07-15T20:30:00+01:00", "description": "Using the Angular TestBed to test asynchronous API data manipulation."}
+</script>
+    </div>
+
+    <div class="column is-one-quarter-desktop is-one-third-tablet is-hidden-print">
+      <aside class="menu">
+<div id="mc_embed_signup">
+  <form
+      action="https://jonrshar.us15.list-manage.com/subscribe/post?u=7ada11180797f3af73228bf0b&amp;id=d172abcbd2"
+      method="post" id="mc-embedded-subscribe-form"
+      name="mc-embedded-subscribe-form" class="validate" target="_blank"
+      novalidate>
+
+    <h2 class="menu-label">Mailing List</h2>
+
+    <div id="mc_embed_signup_scroll">
+      <div class="field mc-field-group">
+        <label for="mce-EMAIL" class="label is-small">Email</label>
+        <div class="field-body">
+          <div class="field">
+            <p class="control has-icons-left">
+              <input type="email" name="EMAIL" class="input required email is-small"
+                     id="mce-EMAIL" placeholder="Email address">
+              <span class="icon is-small is-left">
+              <i class="fa fa-envelope"></i>
+            </span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="mce-FNAME" class="label is-small">Name</label>
+        <div class="field-body">
+          <div class="field is-grouped">
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="FNAME"
+                     id="mce-FNAME" placeholder="First">
+            </p>
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="LNAME"
+                     id="mce-LNAME" placeholder="Last">
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field is-grouped">
+        <p class="control">
+          <input type="submit" name="subscribe" value="Subscribe"
+                 class="button is-small is-success" id="mc-embedded-subscribe">
+        </p>
+          <p class="control">
+            <span class="help">
+              Powered by
+              <a href="http://eepurl.com/cNv6Rb"
+                 title="MailChimp - email marketing made easy and fun">
+                MailChimp
+              </a>
+            </span>
+          </p>
+      </div>
+
+      <div id="mce-responses" class="clear">
+        <div class="response help is-danger" id="mce-error-response"
+             style="display:none"></div>
+        <div class="response help is-success" id="mce-success-response"
+             style="display:none"></div>
+      </div>
+
+      <div style="position: absolute; left: -5000px;" aria-hidden="true">
+        <input type="text" name="b_7ada11180797f3af73228bf0b_d172abcbd2"
+               tabindex="-1" value="">
+      </div>
+    </div>
+  </form>
+</div>
+
+          <p class="menu-label">Other Pages</p>
+          <ul class="menu-list">
+                <li><a                        href="../../../pages/about.html">
+                  <span class="icon is-small"><i class="fa fa-book"></i></span>
+                  <span class="link-text">About</span>
+                </a></li>
+          </ul>
+          <p class="menu-label">Links</p>
+          <ul class="menu-list">
+              <li><a href="http://engineering.pivotal.io/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Pivotal Engineering Journal</span>
+              </a></li>
+              <li><a href="http://blog.cleancoder.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">The Clean Code Blog</span>
+              </a></li>
+              <li><a href="https://codeascraft.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Code as Craft</span>
+              </a></li>
+              <li><a href="http://corgibytes.com/blog/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Corgibytes Blog</span>
+              </a></li>
+          </ul>
+<p class="menu-label">Social</p>
+<ul class="menu-list">
+    <li><a href="https://github.com/textbook">
+      <span class="icon is-small">
+          <i class="fa fa-github fa-fw"></i>
+      </span>
+      <span class="link-text">GitHub</span>
+    </a></li>
+    <li><a href="http://stackoverflow.com/users/3001761/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-stack-overflow fa-fw"></i>
+      </span>
+      <span class="link-text">Stack Overflow</span>
+    </a></li>
+    <li><a href="https://twitter.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-twitter fa-fw"></i>
+      </span>
+      <span class="link-text">Twitter</span>
+    </a></li>
+    <li><a href="https://500px.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-500px fa-fw"></i>
+      </span>
+      <span class="link-text">500px</span>
+    </a></li>
+
+
+</ul>          <p class="menu-label">License</p>
+          
+<ul class="menu-list">
+  <li>
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      <span class="icon is-small">
+        <i class="fa fa-creative-commons fa-fw"></i>
+      </span>
+      <span>CC BY-SA 4.0</span>
+    </a>
+  </li>
+</ul>
+
+      </aside>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container has-text-centered">
+ <p class="subtitle">These are my opinions - if you don't like them, I have others</p>    <div class="credits">
+      <span><a href="https://github.com/textbook/bulrush">Bulrush</a> theme for
+        <a href="https://blog.getpelican.com/">Pelican</a></span>
+      <span><span class="icon is-small"><i class="fa fa-html5"></i></span> HTML 5</span>
+      <span><span class="icon is-small"><i class="fa fa-css3"></i></span> CSS 3</span>
+      <span>Made with <a href="https://bulma.io">Bulma</a></span>
+    </div>
+  </div>
+  <div class="github-fork-ribbon-wrapper is-hidden-mobile is-hidden-print">
+    <div class="github-fork-ribbon">
+      <a href="https://github.com/textbook/textbook.github.io-source">
+        <i class="fa fa-github fa-fw"></i>
+        Fork me on GitHub
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/javascript">
+  document.getElementById('navToggle').addEventListener('click', function () {
+    var nav = document.getElementById('navMenu');
+    var className = nav.getAttribute('class');
+    if (className == 'navbar-menu') {
+      nav.className = 'navbar-menu is-active';
+    } else {
+      nav.className = 'navbar-menu';
+    }
+  });
+</script>
+</body>
+</html>

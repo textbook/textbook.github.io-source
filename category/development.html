@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width">
+  <title>textbook - development</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <link rel="stylesheet" href="../theme/css/main.557acf99.css">
+  <style media="print">.is-hidden-print{display:none !important}</style>
+      <link rel="stylesheet" href="../custom.css">
+</head>
+
+<body id="index" class="home">
+<header class="hero is-primary">
+  <div class="hero-head">
+    <div class="container">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item title is-3"
+             href="../">textbook</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<nav class="navbar has-shadow is-hidden-print">
+  <div class="container">
+    <div class="navbar-center"></div>
+    <span id="navToggle" class="navbar-burger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+    <div id="navMenu" class="navbar-menu">
+        <div class="navbar-end">
+              <a class="navbar-item is-tab "
+                 href="../category/work.html">work</a>
+              <a class="navbar-item is-tab "
+                 href="../category/meta.html">meta</a>
+              <a class="navbar-item is-tab is-active"
+                 href="../category/development.html">development</a>
+        </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="section columns">
+    <div class="column is-three-quarters-desktop is-two-thirds-tablet">
+      <aside id="featured" class="body">
+        <article>
+          <h1 class="title">
+            <a href="../2019/Feb/10/automation-for-the-people.html">Automation for the people</a>
+          </h1>
+<footer class="post-info">
+  <abbr class="published" title="2019-02-10T15:30:00+00:00">
+    Published <span class="is-info">Sun 10 February 2019</span>
+    in <a href="../category/development.html">development</a>
+  </abbr>
+    <br />
+    <abbr class="modified" title="2019-02-11T10:15:00+00:00">
+      Updated Mon 11 February 2019
+    </abbr>
+
+    <p class="author">
+      <em>by           Jonathan Sharpe
+</em>
+      <span class="tag is-small is-rounded">
+        <a href="../tag/code.html">code</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../tag/javascript.html">javascript</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../tag/npm.html">npm</a>
+      </span>
+    </p>
+  
+</footer>          <div class="section">
+            <p>If you're working in the JavaScript ecosystem, your project is likely based
+around a <code>package.json</code> file. This is used by <a href="https://docs.npmjs.com/cli-documentation/">NPM</a> for defining the
+attributes of your package, including its <code>"name"</code> and <code>"version"</code>. You may
+have noticed that one of the other options in the package file is <code>"scripts"</code>.
+By default, this contains a single task:</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;...&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;test&quot;</span><span class="p">:</span> <span class="s2">&quot;echo \&quot;Error: no test specified\&quot; &amp;&amp; exit 1&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>This is an inauspicious start to what I think is a pretty powerful entry point
+to high-level developer automation.</p>
+<h2>Why automate?</h2>
+<p>It's hopefully not controversial to state that developer time is <em>expensive</em>
+and you only want to spend that expensive, finite resource on things that are
+valuable to the business. Automation can minimise the time spent on repeating
+simple tasks that happen many times a day, like linting or testing the code.</p>
+<p>Package scripts provide a way to do this within the tooling your developers are
+likely already using on a daily basis. They don't need to learn a new tool and
+all of the existing NPM packages are available to help them out. It's also
+easy to expand when you need to, because they can start writing more complex
+processes as <code>.js</code> Node scripts or <code>.sh</code> shell scripts and still invoke them
+via <code>npm run</code>.</p>
+<p>Using the package scripts as an entry point also allows you to keep a
+consistent "developer API" across multiple projects. For example, when I
+switched <a href="https://www.npmjs.com/package/fauxauth"><code>fauxauth</code></a> over to TypeScript, using package scripts for
+all common tasks (running e.g. <code>npm run lint</code> rather than calling <code>eslint</code>
+directly) meant that I could change the meaning of the scripts in <a href="https://github.com/textbook/fauxauth/commit/135376876aca5c16f9fbe2d89a3389f3ddf9f2d8#diff-b9cfc7f2cdf78a7f4b91a753d10865a2">the package
+file</a> without having to change the commands I was executing
+(or update the CI configuration). This could also be beneficial if your
+developers work across multiple technologies; <code>npm run lint</code> could call
+<code>eslint</code> for React in some projects and the Angular CLI's <code>ng lint</code> in others,
+but the developer experience would be consistent.</p>
+<h3>Sidebar: linting</h3>
+<p>One of the least valuable things for your developers to spend time on is what
+the code looks like, particularly in the JavaScript ecosystem where you
+rarely ship the code you're writing without some kind of transpilation or
+bundling. You also don't want them to spend time trading commits back and
+forth switching <code>'</code> for <code>"</code> and vice versa; the smaller the diffs, the easier
+it is to figure out what's meaningfully changed when reviewing a commit, the
+better (for the same reason I think trailing commas are a good thing!)</p>
+<p>In general, the less they have to think about, the better; although the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#Automatic_semicolon_insertion">ASI</a>
+rules are fairly straightforward, for example, using semicolons everywhere means
+they <em>never have to consider it</em>. Modern tools can generally do this for them;
+individuals can write the code how they want to, then auto-fix on type, save or
+lint to the agreed shared rules. The team can now focus more of its time on
+delivering the things that matter to your users.</p>
+<p>I also don't think you should have any warnings when you run linters; things
+you actually care about get lost in the noise. Every rule should either be an
+error or ignored completely, so it's unambiguous what's important, and any
+error should fail the build.</p>
+<h2>Hints and tips</h2>
+<ul>
+<li>
+<p><code>"task:step"</code>: this is a very common convention for writing scripts, using
+  a colon in the script name to indicate some kind of sub-step or configuration
+  option. For example:</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;...&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;test&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;test:cover&quot;</span><span class="p">:</span> <span class="s2">&quot;npm run test -- --coverage&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>or</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;...&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;start&quot;</span><span class="p">:</span> <span class="s2">&quot;npm run start:compile &amp;&amp; npm run start:watch&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;start:compile&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;start:watch&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+</li>
+<li>
+<p><code>pre</code> and <code>post</code>: all package scripts get a "free" pre- and post- script hook.
+  All you need to do is include another entry with the same name prefixed with
+  <code>pre</code> or <code>post</code> and this script will get run at the appropriate point in the
+  lifecycle, assuming everything so far has exited zero.</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;...&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;test&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;posttest&quot;</span><span class="p">:</span> <span class="s2">&quot;./collect-coverage.sh&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+</li>
+<li>
+<p><code>-- &lt;args&gt;</code>: any arguments to <code>npm run thing</code> are passed to <code>npm run</code>, <em>not</em>
+  <code>thing</code>. To pass arguments to <code>thing</code> you need to include <code>--</code>, to indicate
+  the end of the arguments to <code>npm run</code>. For example, to pass the argument
+  <code>--port=3000</code> to the <code>serve</code> script, you'd do:</p>
+<div class="highlight"><pre><span></span>$ npm run serve -- --port<span class="o">=</span><span class="m">3000</span>
+</pre></div>
+
+
+</li>
+</ul>
+<h2>Helpful libraries</h2>
+<p>Here are a few great "glue" libraries I've used frequently in other projects:</p>
+<ul>
+<li>
+<p><a href="https://www.npmjs.com/package/concurrently"><code>concurrently</code></a>: run multiple processes at once. Very helpful
+  for a local <a href="https://github.com/textbook/cyf-app-starter/blob/7ed846f0cfea766b7136368ef78f9f1d1650ead4/package.json#L16">dev setup</a> with watching processes on both the server and client
+  builds, for example.</p>
+</li>
+<li>
+<p><a href="https://www.npmjs.com/package/cross-env"><code>cross-env</code></a>: set environment variables in your package scripts,
+  cross-platform. If you're externalising configuration to env vars and want
+  your project to run correctly on both Windows and *nix, this is a must.</p>
+<p><code>cross-env</code> was also the target of the first package discovered in the
+<a href="https://blog.npmjs.org/post/163723642530/crossenv-malware-on-the-npm-registry"><code>hacktask</code></a> account, a set of malicious typo-squatting packages
+that sent the user's environment variables to a remote server. Be careful
+to double-check that you're installing what you think you are.</p>
+</li>
+<li>
+<p><a href="https://www.npmjs.com/package/husky"><code>husky</code></a>: turn package scripts into <a href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks">git hooks</a>. Never again will you
+  accidentally break the build by pushing code that doesn't pass the tests!</p>
+</li>
+<li>
+<p><a href="https://www.npmjs.com/package/rimraf"><code>rimraf</code></a>: <code>rm -rf</code> for Node. Handy for clearing out output
+  directories to ensure a clean state before running a build.</p>
+</li>
+<li>
+<p><a href="https://www.npmjs.com/package/wait-on"><code>wait-on</code></a>: wait for things to be ready. I've used this to run E2E
+  tests against a local dev server, making sure the server is actually spun up
+  and providing responses before kicking off the test suite.</p>
+</li>
+</ul>
+<h2>Downsides</h2>
+<p>There are a couple of downsides I've noticed to doing automation predominantly
+through the package file.</p>
+<p>One is simply <em>length</em>; as you add more complexity to your automation, either
+you have very long lines, or lots of sub-steps, or sometimes both. For
+example, <a href="https://github.com/HelpRefugees/project-flamingo/blob/93011e309ac3026b995c95e9dc1241fb05b5c553/package.json#L6-L51">this project</a> that I worked on has 43 scripts,
+steps and pre-/post- hooks for performing various tasks. This led to having a
+separate <a href="https://github.com/HelpRefugees/project-flamingo/wiki/Package-Scripts">wiki page</a> listing what they are and what they do, as putting
+comments in a JSON file is not straightforward (see <a href="https://stackoverflow.com/q/14221579/3001761"><em>"How do I add comments to
+package.json for npm install?"</em></a> for one option). Now there
+is a risk that, as the scripts are updated and added to, the wiki page does not
+stay up-to-date with what they currently do. You could move the steps out to
+shell or Node scripts, or use an additional tool like <a href="https://www.npmjs.com/package/nps"><code>nps</code></a>, but that's
+yet another thing to think about.</p>
+<p>Another is the difficulty of handling arguments when <em>combining</em> scripts. As
+mentioned above you can split a complex process into multiple steps and call
+each of them in turn:</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;...&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;process:first&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;process:second&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;process&quot;</span><span class="p">:</span> <span class="s2">&quot;npm run process:first &amp;&amp; npm run process:second&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>But what if you want to pass an argument down to one of the sub-steps? <code>npm run
+process -- --something</code> won't do it, so you often end up writing several
+scripts to call the same processes with different arguments.</p>
+<h2>Bonus round: Yarn</h2>
+<p>The other major packaging option in the Node ecosystem is <a href="https://yarnpkg.com/">Yarn</a>. This uses
+the same <code>package.json</code> file as NPM, so switching over is relatively
+straightforward. I won't go into the pros and cons here, but one thing to
+note is that running scripts and passing arguments is a little simpler in Yarn
+than in NPM; to run a script and pass arguments, instead of:</p>
+<div class="highlight"><pre><span></span>$ npm run thing -- --arg
+</pre></div>
+
+
+<p>you can just do:</p>
+<div class="highlight"><pre><span></span>$ yarn thing --arg
+</pre></div>
+
+
+<h2>Further reading</h2>
+<p>Here are some useful articles and references:</p>
+<ul>
+<li><a href="https://docs.npmjs.com/misc/config#shorthands-and-other-cli-niceties">NPM CLI flags</a> from the official documentation</li>
+<li><a href="https://corgibytes.com/blog/2017/04/18/npm-tips/">NPM scripts: tips everyone should know</a> by <a href="https://corgibytes.com/">Corgibytes</a></li>
+<li><a href="https://www.keithcirkel.co.uk/how-to-use-npm-as-a-build-tool/">How to use NPM as a build tool</a> by Keith Cirkel</li>
+<li><a href="https://michael-kuehnel.de/tooling/2018/03/22/helpers-and-tips-for-npm-run-scripts.html">Helpers and tips for NPM run scripts</a> by Michael Kuehnel</li>
+</ul>
+          </div>
+        </article>
+      </aside>
+  <div class="is-hidden-print">
+    <h2 class="subtitle">Other articles</h2>
+    <div class="columns is-multiline">
+        <div class="column is-half-tablet is-one-third-desktop">
+          <div class="card is-fullwidth is-fullheight">
+            <div class="card-content">
+              <a href="../2019/Jan/14/npm-service-accounts.html">
+                <h3 class="title is-5">Publishing npm packages with service accounts</h3>
+                <div class="heading subtitle">Mon 14 January 2019</div>
+                <div><p>2FA adds security to your npm account but complicates the process of publishing from CI; here's one way around that</p></div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-third-desktop">
+          <div class="card is-fullwidth is-fullheight">
+            <div class="card-content">
+              <a href="../2017/Sep/11/http-client-conversion.html">
+                <h3 class="title is-5">Converting to the Angular HttpClient</h3>
+                <div class="heading subtitle">Mon 11 September 2017</div>
+                <div><p>A summary of the experience of converting a simple Angular project from Http to the new HttpClient</p></div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-third-desktop">
+          <div class="card is-fullwidth is-fullheight">
+            <div class="card-content">
+              <a href="../2017/Jul/15/angular-http-client.html">
+                <h3 class="title is-5">New to Angular 4.3: HttpClient</h3>
+                <div class="heading subtitle">Sat 15 July 2017</div>
+                <div><p>The latest version of Angular includes a new HTTP client, with a new API.</p></div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-third-desktop">
+          <div class="card is-fullwidth is-fullheight">
+            <div class="card-content">
+              <a href="../2017/May/29/angular-ng-template-outlet.html">
+                <h3 class="title is-5">ngTemplateOutlet tricks</h3>
+                <div class="heading subtitle">Mon 29 May 2017</div>
+                <div><p>Using an Angular ngTemplateOutlet to bind child content from the parent template.</p></div>
+              </a>
+            </div>
+          </div>
+        </div>
+    </div>
+<nav class="pagination is-centered">
+    <a class="pagination-previous" href="#" disabled>
+      Previous
+    </a>
+    <a class="pagination-next"
+       href="../category/development2.html">
+      Next page
+    </a>
+  <ul class="pagination-list">
+    <li>Page 1 / 3</li>
+  </ul>
+</nav>
+<br>  </div>
+    </div>
+
+    <div class="column is-one-quarter-desktop is-one-third-tablet is-hidden-print">
+      <aside class="menu">
+<div id="mc_embed_signup">
+  <form
+      action="https://jonrshar.us15.list-manage.com/subscribe/post?u=7ada11180797f3af73228bf0b&amp;id=d172abcbd2"
+      method="post" id="mc-embedded-subscribe-form"
+      name="mc-embedded-subscribe-form" class="validate" target="_blank"
+      novalidate>
+
+    <h2 class="menu-label">Mailing List</h2>
+
+    <div id="mc_embed_signup_scroll">
+      <div class="field mc-field-group">
+        <label for="mce-EMAIL" class="label is-small">Email</label>
+        <div class="field-body">
+          <div class="field">
+            <p class="control has-icons-left">
+              <input type="email" name="EMAIL" class="input required email is-small"
+                     id="mce-EMAIL" placeholder="Email address">
+              <span class="icon is-small is-left">
+              <i class="fa fa-envelope"></i>
+            </span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="mce-FNAME" class="label is-small">Name</label>
+        <div class="field-body">
+          <div class="field is-grouped">
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="FNAME"
+                     id="mce-FNAME" placeholder="First">
+            </p>
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="LNAME"
+                     id="mce-LNAME" placeholder="Last">
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field is-grouped">
+        <p class="control">
+          <input type="submit" name="subscribe" value="Subscribe"
+                 class="button is-small is-success" id="mc-embedded-subscribe">
+        </p>
+          <p class="control">
+            <span class="help">
+              Powered by
+              <a href="http://eepurl.com/cNv6Rb"
+                 title="MailChimp - email marketing made easy and fun">
+                MailChimp
+              </a>
+            </span>
+          </p>
+      </div>
+
+      <div id="mce-responses" class="clear">
+        <div class="response help is-danger" id="mce-error-response"
+             style="display:none"></div>
+        <div class="response help is-success" id="mce-success-response"
+             style="display:none"></div>
+      </div>
+
+      <div style="position: absolute; left: -5000px;" aria-hidden="true">
+        <input type="text" name="b_7ada11180797f3af73228bf0b_d172abcbd2"
+               tabindex="-1" value="">
+      </div>
+    </div>
+  </form>
+</div>
+
+          <p class="menu-label">Other Pages</p>
+          <ul class="menu-list">
+                <li><a                        href="../pages/about.html">
+                  <span class="icon is-small"><i class="fa fa-book"></i></span>
+                  <span class="link-text">About</span>
+                </a></li>
+          </ul>
+          <p class="menu-label">Links</p>
+          <ul class="menu-list">
+              <li><a href="http://engineering.pivotal.io/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Pivotal Engineering Journal</span>
+              </a></li>
+              <li><a href="http://blog.cleancoder.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">The Clean Code Blog</span>
+              </a></li>
+              <li><a href="https://codeascraft.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Code as Craft</span>
+              </a></li>
+              <li><a href="http://corgibytes.com/blog/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Corgibytes Blog</span>
+              </a></li>
+          </ul>
+<p class="menu-label">Social</p>
+<ul class="menu-list">
+    <li><a href="https://github.com/textbook">
+      <span class="icon is-small">
+          <i class="fa fa-github fa-fw"></i>
+      </span>
+      <span class="link-text">GitHub</span>
+    </a></li>
+    <li><a href="http://stackoverflow.com/users/3001761/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-stack-overflow fa-fw"></i>
+      </span>
+      <span class="link-text">Stack Overflow</span>
+    </a></li>
+    <li><a href="https://twitter.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-twitter fa-fw"></i>
+      </span>
+      <span class="link-text">Twitter</span>
+    </a></li>
+    <li><a href="https://500px.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-500px fa-fw"></i>
+      </span>
+      <span class="link-text">500px</span>
+    </a></li>
+
+
+</ul>          <p class="menu-label">License</p>
+          
+<ul class="menu-list">
+  <li>
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      <span class="icon is-small">
+        <i class="fa fa-creative-commons fa-fw"></i>
+      </span>
+      <span>CC BY-SA 4.0</span>
+    </a>
+  </li>
+</ul>
+
+      </aside>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container has-text-centered">
+ <p class="subtitle">These are my opinions - if you don't like them, I have others</p>    <div class="credits">
+      <span><a href="https://github.com/textbook/bulrush">Bulrush</a> theme for
+        <a href="https://blog.getpelican.com/">Pelican</a></span>
+      <span><span class="icon is-small"><i class="fa fa-html5"></i></span> HTML 5</span>
+      <span><span class="icon is-small"><i class="fa fa-css3"></i></span> CSS 3</span>
+      <span>Made with <a href="https://bulma.io">Bulma</a></span>
+    </div>
+  </div>
+  <div class="github-fork-ribbon-wrapper is-hidden-mobile is-hidden-print">
+    <div class="github-fork-ribbon">
+      <a href="https://github.com/textbook/textbook.github.io-source">
+        <i class="fa fa-github fa-fw"></i>
+        Fork me on GitHub
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/javascript">
+  document.getElementById('navToggle').addEventListener('click', function () {
+    var nav = document.getElementById('navMenu');
+    var className = nav.getAttribute('class');
+    if (className == 'navbar-menu') {
+      nav.className = 'navbar-menu is-active';
+    } else {
+      nav.className = 'navbar-menu';
+    }
+  });
+</script>
+</body>
+</html>

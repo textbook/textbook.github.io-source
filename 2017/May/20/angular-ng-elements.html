@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width">
+  <title>Angular's "ng-" elements</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <link rel="stylesheet" href="../../../theme/css/main.557acf99.css">
+  <style media="print">.is-hidden-print{display:none !important}</style>
+      <link rel="stylesheet" href="../../../custom.css">
+<meta property="og:title" content="textbook - Angular's "ng-" elements">
+  <meta property="og:description" content="A quick spotters' guide to some of the "ng-" elements that Angular provides.">
+<meta property="og:url" content="../../../2017/May/20/angular-ng-elements.html">
+    <meta property="og:image" content="../../../images/avatar.png">
+    <meta name="twitter:image:alt" content="textbook | These are my opinions - if you don't like them, I have others">
+<meta name="twitter:card" content="summary">
+  <meta name="twitter:creator" content="@jonrsharpe">
+  <meta name="twitter:site" content="@jonrsharpe">
+<meta property="og:site_name" content="textbook">
+<meta property="og:type" content="article">
+  <meta property="article:published_time" content="2017-05-20T17:00:00+01:00">
+  <meta property="article:modified_time" content="2017-05-29T15:30:00+01:00">
+    <meta property="article:tag" content="angular">
+    <meta property="article:tag" content="html">
+  <meta property="article:section" content="development">
+</head>
+
+<body id="index" class="home">
+<header class="hero is-primary">
+  <div class="hero-head">
+    <div class="container">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item title is-3"
+             href="../../../">textbook</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<nav class="navbar has-shadow is-hidden-print">
+  <div class="container">
+    <div class="navbar-center"></div>
+    <span id="navToggle" class="navbar-burger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+    <div id="navMenu" class="navbar-menu">
+        <div class="navbar-end">
+              <a class="navbar-item is-tab "
+                 href="../../../category/work.html">work</a>
+              <a class="navbar-item is-tab "
+                 href="../../../category/meta.html">meta</a>
+              <a class="navbar-item is-tab is-active"
+                 href="../../../category/development.html">development</a>
+        </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="section columns">
+    <div class="column is-three-quarters-desktop is-two-thirds-tablet">
+<section id="content" class="body">
+  <article>
+    <h1 class="title">
+      <a href="../../../2017/May/20/angular-ng-elements.html" rel="bookmark"
+         title="Permalink to Angular's "ng-" elements">Angular's "ng-" elements</a></h1>
+<footer class="post-info">
+  <abbr class="published" title="2017-05-20T17:00:00+01:00">
+    Published <span class="is-info">Sat 20 May 2017</span>
+    in <a href="../../../category/development.html">development</a>
+  </abbr>
+    <br />
+    <abbr class="modified" title="2017-05-29T15:30:00+01:00">
+      Updated Mon 29 May 2017
+    </abbr>
+
+    <p class="author">
+      <em>by           Jonathan Sharpe
+</em>
+      <span class="tag is-small is-rounded">
+        <a href="../../../tag/angular.html">angular</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../../../tag/html.html">html</a>
+      </span>
+    </p>
+  
+</footer>    <div class="section"><p>AngularJS (1.x) had a lot of attributes that followed the <code>ng-</code> naming
+convention, but you don't see that prefix much in Angular (2+); <code>ng-repeat</code> is
+now <code>*ngFor</code>, <code>ng-blur</code> is <code>(blur)</code>, etc. However, there are a few core
+elements named with that prefix. They all share one common trait (they don't
+get rendered into the resulting DOM) but differ in behaviour and usage. I found
+it difficult to remember which was which, so wrote this out to help get them
+straight in my head.</p>
+<h2>DOM simplification with <code>ng-container</code></h2>
+<p>The one you will probably end up writing most frequently yourself is
+<code>ng-container</code>. This doesn't confer any particular behaviour, and just includes
+its children in the markup wherever you put it.</p>
+<div class="highlight"><pre><span></span><span class="c">&lt;!-- usage --&gt;</span>
+<span class="p">&lt;</span><span class="nt">ng-container</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>I am a paragraph.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ng-container</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- result --&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>I am a paragraph.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>To see where this could be useful, imagine you want to conditionally include
+multiple elements without breaking a parent-child relationship between elements
+(for example in a list or table, or where the relationship is used for a CSS
+styling rule) or repeating the condition over and over again:</p>
+<div class="highlight"><pre><span></span><span class="c">&lt;!-- without ng-container: invalid markup --&gt;</span>
+<span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span> 
+  <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>One<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Two<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">div</span> <span class="err">*</span><span class="na">ngIf</span><span class="o">=</span><span class="s">&quot;moreThanTwo&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Three<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Four<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Five<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- without ng-container: repetition --&gt;</span>
+<span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>One<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Two<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">li</span> <span class="err">*</span><span class="na">ngIf</span><span class="o">=</span><span class="s">&quot;moreThanTwo&quot;</span><span class="p">&gt;</span>Three<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">li</span> <span class="err">*</span><span class="na">ngIf</span><span class="o">=</span><span class="s">&quot;moreThanTwo&quot;</span><span class="p">&gt;</span>Four<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">li</span> <span class="err">*</span><span class="na">ngIf</span><span class="o">=</span><span class="s">&quot;moreThanTwo&quot;</span><span class="p">&gt;</span>Five<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- with ng-container --&gt;</span>
+<span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span> 
+  <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>One<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Two<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ng-container</span> <span class="err">*</span><span class="na">ngIf</span><span class="o">=</span><span class="s">&quot;moreThanTwo&quot;</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Three<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Four<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">li</span><span class="p">&gt;</span>Five<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">ng-container</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<h2>Content projection with <code>ng-content</code></h2>
+<p>If you ever used AngularJS (the 1.x precursor to Angular versions 2 and up),
+you may have come across <em>"transclusion"</em>, the ability to take HTML and inject
+it into a template at a specified position. That is now referred to as
+<em>"content projection"</em>, but is a similar idea. In this case, the <code>ng-content</code>
+element is completely replaced by the projected content. For example, given
+a component with the selector <code>'my-component'</code>:</p>
+<div class="highlight"><pre><span></span><span class="c">&lt;!-- template --&gt;</span>
+<span class="p">&lt;</span><span class="nt">ng-content</span><span class="p">&gt;&lt;/</span><span class="nt">ng-content</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- usage --&gt;</span>
+<span class="p">&lt;</span><span class="nt">my-component</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>I am a paragraph.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">my-component</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- result --&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>I am a paragraph.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>The element also takes a <code>select</code> attribute, which allows you to specify which
+element gets projected where, especially when you have multiple <code>ng-content</code>
+elements for different projected content. A more complex example, using classes
+as selectors:</p>
+<div class="highlight"><pre><span></span><span class="c">&lt;!-- template --&gt;</span>
+<span class="p">&lt;</span><span class="nt">ng-content</span> <span class="na">select</span><span class="o">=</span><span class="s">&quot;.first&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">ng-content</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">ng-content</span> <span class="na">select</span><span class="o">=</span><span class="s">&quot;.second&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">ng-content</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- usage --&gt;</span>
+<span class="p">&lt;</span><span class="nt">my-component</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;second&quot;</span><span class="p">&gt;</span>I will be last.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;first&quot;</span><span class="p">&gt;</span>And I will be first.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">my-component</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- result --&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;first&quot;</span><span class="p">&gt;</span>I will be first.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;second&quot;</span><span class="p">&gt;</span>I will be last.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>There are three selectors you can use:</p>
+<ul>
+<li>classes (<code>select=".class"</code>); </li>
+<li>attributes (<code>select="[attribute]"</code>); and</li>
+<li>elements (<code>select="element"</code>).</li>
+</ul>
+<p>They can be combined as needed; using all three:</p>
+<div class="highlight"><pre><span></span><span class="c">&lt;!-- template --&gt;</span>
+<span class="p">&lt;</span><span class="nt">ng-content</span> <span class="na">select</span><span class="o">=</span><span class="s">&quot;p.foo[aria-label]&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">ng-content</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- usage --&gt;</span>
+<span class="p">&lt;</span><span class="nt">my-component</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;foo&quot;</span><span class="p">&gt;</span>Ignore me.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;foo&quot;</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Projected&quot;</span><span class="p">&gt;</span>Project me.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;bar&quot;</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Ignored&quot;</span><span class="p">&gt;</span>Ignore me.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">my-component</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- result --&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;foo&quot;</span> <span class="na">aria-label</span><span class="o">=</span><span class="s">&quot;Projected&quot;</span><span class="p">&gt;</span>Project me.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>This can be useful for writing generic components whose markup you'd like the
+parent component to have some influence over. However, note that you can't do
+e.g. <code>&lt;ng-content *ngFor="..."&gt;</code>, as the content is only ever projected once,
+and the projected content from the parent can't reference variables in the
+child.</p>
+<blockquote>
+<p>Note that you <em>can</em> pass down a context if you use a template outlet to
+render the child content, see <a href="../../../2017/May/29/angular-ng-template-outlet.html">ngTemplateOutlet tricks</a>.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><span class="c">&lt;!-- template --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;child&quot;</span><span class="p">&gt;</span>{{ childProperty }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">ng-content</span><span class="p">&gt;&lt;/</span><span class="nt">ng-content</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- usage --&gt;</span>
+<span class="p">&lt;</span><span class="nt">my-component</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;parent&quot;</span><span class="p">&gt;</span>{{ childProperty }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;parent&quot;</span><span class="p">&gt;</span>{{ parentProperty }}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">my-component</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- result --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;child&quot;</span><span class="p">&gt;</span>I am a property of the child.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;parent&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;parent&quot;</span><span class="p">&gt;</span>I am a property of the parent.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<h2>Conditional inclusion with <code>ng-template</code></h2>
+<p>The last element you will probably be using very frequently even if you don't
+ever write it yourself, because it's generated by Angular for <a href="https://angular.io/docs/ts/latest/guide/structural-directives.html">structural
+directives</a> like <code>*ngIf</code> and <code>*ngFor</code>. </p>
+<p><code>ng-template</code> is a bit like <code>ng-container</code>, in that only its children get
+included in the rendered DOM, but it has conditional behaviour; by default,
+you'll just see comments in the markup, for example:</p>
+<div class="highlight"><pre><span></span><span class="c">&lt;!--bindings={</span>
+<span class="c">  &quot;ng-reflect-ng-if&quot;: &quot;true&quot;</span>
+<span class="c">}--&gt;</span>
+
+<span class="c">&lt;!--bindings={</span>
+<span class="c">  &quot;ng-reflect-ng-switch-case&quot;: &quot;true&quot;</span>
+<span class="c">}--&gt;</span>
+
+<span class="c">&lt;!--bindings={</span>
+<span class="c">  &quot;ng-reflect-ng-for-of&quot;: &quot;[object Object],[object Object&quot;</span>
+<span class="c">}--&gt;</span>
+</pre></div>
+
+
+<p>These bindings are the rules that tell Angular what to render and under what
+circumstances. If the appropriate conditions aren't met, the relevant elements
+won't be included at all. Structural directives are de-sugared into
+<code>ng-template</code> elements in two steps:</p>
+<div class="highlight"><pre><span></span><span class="c">&lt;!-- original --&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span> <span class="err">*</span><span class="na">ngIf</span><span class="o">=</span><span class="s">&quot;condition&quot;</span><span class="p">&gt;</span>Maybe show me?<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- step 1 --&gt;</span>
+<span class="p">&lt;</span><span class="nt">p</span> <span class="na">template</span><span class="o">=</span><span class="s">&quot;ngIf condition&quot;</span><span class="p">&gt;</span>Maybe show me?<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- step 2 --&gt;</span>
+<span class="p">&lt;</span><span class="nt">ng-template</span> <span class="err">[</span><span class="na">ngIf</span><span class="err">]=&quot;</span><span class="na">condition</span><span class="err">&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Maybe show me?<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ng-template</span><span class="p">&gt;</span>
+</pre></div>
+
+
+<p>As you can see, this turns the syntactic sugar into an <code>ng-template</code> element
+with the familiar <code>[...]="..."</code> property binding.</p>
+<p>If you're using Angular 4.x, you need to use <code>ng-template</code> directly for the new
+<code>then</code> and <code>else</code> syntax on <code>ngIf</code>, so your alternative elements don't appear
+in the rendered DOM by default. Below are four ways to show one of two elements
+depending on a boolean property:</p>
+<div class="highlight"><pre><span></span><span class="c">&lt;!-- 2.x version with ngSwitch --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="err">[</span><span class="na">ngSwitch</span><span class="err">]=&quot;</span><span class="na">condition</span><span class="err">&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="err">*</span><span class="na">ngSwitchCase</span><span class="o">=</span><span class="s">&quot;true&quot;</span><span class="p">&gt;</span>Condition was true.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="err">*</span><span class="na">ngSwitchDefault</span><span class="p">&gt;</span>Condition was false.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- 2.x version with ngIf twice --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="err">*</span><span class="na">ngIf</span><span class="o">=</span><span class="s">&quot;condition&quot;</span><span class="p">&gt;</span>Condition was true.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span> <span class="err">*</span><span class="na">ngIf</span><span class="o">=</span><span class="s">&quot;!condition&quot;</span><span class="p">&gt;</span>Condition was false.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- 4.x version with ngIf; else --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="err">*</span><span class="na">ngIf</span><span class="o">=</span><span class="s">&quot;condition; else falseCase&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Condition was true.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">ng-template</span> <span class="err">#</span><span class="na">falseCase</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Condition was false.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ng-template</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- 4.x version with ngIf; then; else --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span> <span class="err">*</span><span class="na">ngIf</span><span class="o">=</span><span class="s">&quot;condition; then trueCase; else falseCase&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">ng-template</span> <span class="err">#</span><span class="na">trueCase</span><span class="p">&gt;</span>
+ <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Condition was true.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ng-template</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">ng-template</span> <span class="err">#</span><span class="na">falseCase</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Condition was false.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">ng-template</span><span class="p">&gt;</span>
+
+<span class="c">&lt;!-- result (condition=true) --&gt;</span>
+<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Condition was true.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div></div>
+
+  </article>
+</section>
+
+<script type="application/ld+json">
+  {"articleSection": "development", "author": {"@type": "Person", "name": "Jonathan Sharpe"}, "datePublished": "2017-05-20T17:00:00+01:00", "headline": "Angular's \"ng-\" elements", "mainEntityOfPage": {"@type": "WebPage", "@id": "../../../2017/May/20/angular-ng-elements.html"}, "@context": "http://schema.org", "@type": "BlogPosting", "dateModified": "2017-05-29T15:30:00+01:00", "description": "A quick spotters' guide to some of the \"ng-\" elements that Angular provides."}
+</script>
+    </div>
+
+    <div class="column is-one-quarter-desktop is-one-third-tablet is-hidden-print">
+      <aside class="menu">
+<div id="mc_embed_signup">
+  <form
+      action="https://jonrshar.us15.list-manage.com/subscribe/post?u=7ada11180797f3af73228bf0b&amp;id=d172abcbd2"
+      method="post" id="mc-embedded-subscribe-form"
+      name="mc-embedded-subscribe-form" class="validate" target="_blank"
+      novalidate>
+
+    <h2 class="menu-label">Mailing List</h2>
+
+    <div id="mc_embed_signup_scroll">
+      <div class="field mc-field-group">
+        <label for="mce-EMAIL" class="label is-small">Email</label>
+        <div class="field-body">
+          <div class="field">
+            <p class="control has-icons-left">
+              <input type="email" name="EMAIL" class="input required email is-small"
+                     id="mce-EMAIL" placeholder="Email address">
+              <span class="icon is-small is-left">
+              <i class="fa fa-envelope"></i>
+            </span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="mce-FNAME" class="label is-small">Name</label>
+        <div class="field-body">
+          <div class="field is-grouped">
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="FNAME"
+                     id="mce-FNAME" placeholder="First">
+            </p>
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="LNAME"
+                     id="mce-LNAME" placeholder="Last">
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field is-grouped">
+        <p class="control">
+          <input type="submit" name="subscribe" value="Subscribe"
+                 class="button is-small is-success" id="mc-embedded-subscribe">
+        </p>
+          <p class="control">
+            <span class="help">
+              Powered by
+              <a href="http://eepurl.com/cNv6Rb"
+                 title="MailChimp - email marketing made easy and fun">
+                MailChimp
+              </a>
+            </span>
+          </p>
+      </div>
+
+      <div id="mce-responses" class="clear">
+        <div class="response help is-danger" id="mce-error-response"
+             style="display:none"></div>
+        <div class="response help is-success" id="mce-success-response"
+             style="display:none"></div>
+      </div>
+
+      <div style="position: absolute; left: -5000px;" aria-hidden="true">
+        <input type="text" name="b_7ada11180797f3af73228bf0b_d172abcbd2"
+               tabindex="-1" value="">
+      </div>
+    </div>
+  </form>
+</div>
+
+          <p class="menu-label">Other Pages</p>
+          <ul class="menu-list">
+                <li><a                        href="../../../pages/about.html">
+                  <span class="icon is-small"><i class="fa fa-book"></i></span>
+                  <span class="link-text">About</span>
+                </a></li>
+          </ul>
+          <p class="menu-label">Links</p>
+          <ul class="menu-list">
+              <li><a href="http://engineering.pivotal.io/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Pivotal Engineering Journal</span>
+              </a></li>
+              <li><a href="http://blog.cleancoder.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">The Clean Code Blog</span>
+              </a></li>
+              <li><a href="https://codeascraft.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Code as Craft</span>
+              </a></li>
+              <li><a href="http://corgibytes.com/blog/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Corgibytes Blog</span>
+              </a></li>
+          </ul>
+<p class="menu-label">Social</p>
+<ul class="menu-list">
+    <li><a href="https://github.com/textbook">
+      <span class="icon is-small">
+          <i class="fa fa-github fa-fw"></i>
+      </span>
+      <span class="link-text">GitHub</span>
+    </a></li>
+    <li><a href="http://stackoverflow.com/users/3001761/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-stack-overflow fa-fw"></i>
+      </span>
+      <span class="link-text">Stack Overflow</span>
+    </a></li>
+    <li><a href="https://twitter.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-twitter fa-fw"></i>
+      </span>
+      <span class="link-text">Twitter</span>
+    </a></li>
+    <li><a href="https://500px.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-500px fa-fw"></i>
+      </span>
+      <span class="link-text">500px</span>
+    </a></li>
+
+
+</ul>          <p class="menu-label">License</p>
+          
+<ul class="menu-list">
+  <li>
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      <span class="icon is-small">
+        <i class="fa fa-creative-commons fa-fw"></i>
+      </span>
+      <span>CC BY-SA 4.0</span>
+    </a>
+  </li>
+</ul>
+
+      </aside>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container has-text-centered">
+ <p class="subtitle">These are my opinions - if you don't like them, I have others</p>    <div class="credits">
+      <span><a href="https://github.com/textbook/bulrush">Bulrush</a> theme for
+        <a href="https://blog.getpelican.com/">Pelican</a></span>
+      <span><span class="icon is-small"><i class="fa fa-html5"></i></span> HTML 5</span>
+      <span><span class="icon is-small"><i class="fa fa-css3"></i></span> CSS 3</span>
+      <span>Made with <a href="https://bulma.io">Bulma</a></span>
+    </div>
+  </div>
+  <div class="github-fork-ribbon-wrapper is-hidden-mobile is-hidden-print">
+    <div class="github-fork-ribbon">
+      <a href="https://github.com/textbook/textbook.github.io-source">
+        <i class="fa fa-github fa-fw"></i>
+        Fork me on GitHub
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/javascript">
+  document.getElementById('navToggle').addEventListener('click', function () {
+    var nav = document.getElementById('navMenu');
+    var className = nav.getAttribute('class');
+    if (className == 'navbar-menu') {
+      nav.className = 'navbar-menu is-active';
+    } else {
+      nav.className = 'navbar-menu';
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width">
+  <title>textbook - angular</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+    <link rel="stylesheet" href="../theme/css/main.557acf99.css">
+  <style media="print">.is-hidden-print{display:none !important}</style>
+      <link rel="stylesheet" href="../custom.css">
+</head>
+
+<body id="index" class="home">
+<header class="hero is-primary">
+  <div class="hero-head">
+    <div class="container">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <a class="navbar-item title is-3"
+             href="../">textbook</a>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<nav class="navbar has-shadow is-hidden-print">
+  <div class="container">
+    <div class="navbar-center"></div>
+    <span id="navToggle" class="navbar-burger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+    <div id="navMenu" class="navbar-menu">
+        <div class="navbar-end">
+              <a class="navbar-item is-tab "
+                 href="../category/work.html">work</a>
+              <a class="navbar-item is-tab "
+                 href="../category/meta.html">meta</a>
+              <a class="navbar-item is-tab "
+                 href="../category/development.html">development</a>
+        </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="section columns">
+    <div class="column is-three-quarters-desktop is-two-thirds-tablet">
+      <aside id="featured" class="body">
+        <article>
+          <h1 class="title">
+            <a href="../2017/Sep/11/http-client-conversion.html">Converting to the Angular HttpClient</a>
+          </h1>
+<footer class="post-info">
+  <abbr class="published" title="2017-09-11T22:50:00+01:00">
+    Published <span class="is-info">Mon 11 September 2017</span>
+    in <a href="../category/development.html">development</a>
+  </abbr>
+
+    <p class="author">
+      <em>by           Jonathan Sharpe
+</em>
+      <span class="tag is-small is-rounded">
+        <a href="../tag/code.html">code</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../tag/angular.html">angular</a>
+      </span>
+      <span class="tag is-small is-rounded">
+        <a href="../tag/tdd.html">tdd</a>
+      </span>
+    </p>
+  
+</footer>          <div class="section">
+            <p>As I mentioned in <a href="../2017/Jul/15/angular-http-client.html">a previous article</a>, Angular 4.3 introduced a new API for
+making HTTP calls, supplementing the <code>HttpModule</code> in <code>@angular/http</code> with the 
+new <code>HttpClientModule</code> in <code>@angular/common/http</code>. I experimented with the new
+interceptors and request progress API, but didn't actually try it out in a
+working application.</p>
+<p>So below is the results of an experiment to switch an existing project, <a href="https://github.com/textbook/salary-stats">Salary
+Stats</a>, over to the <code>HttpClient</code> and test drive the new API for both the
+client and the tests. Despite the clear warnings in the documentation I'm using
+the Angular <a href="https://www.npmjs.com/package/angular-in-memory-web-api">in-memory web API</a> to allow the user to make CRUD operations
+without setting up a backend; this needed an upgrade to v0.4.0 to support the
+new client.</p>
+<h2>Setup</h2>
+<p>Firstly, there's configuration. Using <code>Http</code>, the best way to test a service
+was to replace the <code>ConnectionBackend</code> with a special <code>MockBackend</code> that
+provides access to active connections. Using Angular's dependency injection
+(DI) through the <code>TestBed</code>, this was reasonably straightforward:</p>
+<div class="highlight"><pre><span></span><span class="nx">beforeEach</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">TestBed</span><span class="p">.</span><span class="nx">configureTestingModule</span><span class="p">({</span>
+    <span class="nx">providers</span><span class="o">:</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="nx">provide</span>: <span class="kt">ConnectionBackend</span><span class="p">,</span> <span class="nx">useClass</span>: <span class="kt">MockBackend</span> <span class="p">},</span>
+      <span class="p">{</span> <span class="nx">provide</span>: <span class="kt">RequestOptions</span><span class="p">,</span> <span class="nx">useClass</span>: <span class="kt">BaseRequestOptions</span> <span class="p">},</span>
+      <span class="nx">Http</span><span class="p">,</span>
+      <span class="nx">PersonService</span><span class="p">,</span>
+    <span class="p">]</span>
+  <span class="p">});</span>
+
+  <span class="nx">service</span> <span class="o">=</span> <span class="nx">TestBed</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PersonService</span><span class="p">);</span>
+  <span class="nx">backend</span> <span class="o">=</span> <span class="nx">TestBed</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">ConnectionBackend</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>The <code>Http</code> class has two injected dependencies, so we can either import the
+whole <code>HttpModule</code> and override <code>ConnectionBackend</code> or just provide both
+directly. Things are much simpler with the <code>HttpClientTestingModule</code>, however,
+which can be added to the <code>imports</code> array and will mock everything for you:</p>
+<div class="highlight"><pre><span></span><span class="nx">beforeEach</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">TestBed</span><span class="p">.</span><span class="nx">configureTestingModule</span><span class="p">({</span>
+    <span class="nx">imports</span><span class="o">:</span> <span class="p">[</span><span class="nx">HttpClientTestingModule</span><span class="p">],</span>
+    <span class="nx">providers</span><span class="o">:</span> <span class="p">[</span><span class="nx">PersonService</span><span class="p">],</span>
+  <span class="p">});</span>
+
+  <span class="nx">service</span> <span class="o">=</span> <span class="nx">TestBed</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">PersonService</span><span class="p">);</span>
+  <span class="nx">httpMock</span> <span class="o">=</span> <span class="nx">TestBed</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">HttpTestingController</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">afterEach</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">httpMock</span><span class="p">.</span><span class="nx">verify</span><span class="p">();</span>
+<span class="p">})</span>
+</pre></div>
+
+
+<p>Now instead of the <code>MockBackend</code> we get access to the <code>HttpTestingController</code>,
+which gives access to a more synchronous API; rather than subscribing to a
+stream of connections you can assert on the existence of specific requests,
+flush them with a response as needed then verify that no unexpected requests
+have been made.</p>
+<h2>Checking the request</h2>
+<p>A simple first test for a new service method would be to check that it's making
+the appropriate request to the backend.</p>
+<div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should get the people from the API&#39;</span><span class="p">,</span> <span class="nx">done</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">backend</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">connection</span>: <span class="kt">MockConnection</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">connection</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">url</span><span class="p">).</span><span class="nx">toMatch</span><span class="p">(</span><span class="sr">/\/people$/</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">connection</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">method</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="nx">RequestMethod</span><span class="p">.</span><span class="nx">Get</span><span class="p">,</span> <span class="s1">&#39;expected GET request&#39;</span><span class="p">);</span>
+    <span class="nx">done</span><span class="p">();</span>
+  <span class="p">});</span>
+
+  <span class="nx">service</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>Rewriting this with the new test API:</p>
+<div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should get the people from the API&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">service</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
+
+  <span class="nx">httpMock</span><span class="p">.</span><span class="nx">expectOne</span><span class="p">(</span><span class="s1">&#39;/app/people&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>This demonstrates the value of the synchronous API; no more worrying about the
+<code>DoneFn</code> and which order to make the request and set up the expectations.
+Personally I find the second version much more readable, as it's a better fit
+for the common <em>"Arrange, Act, Assert"</em> (or <em>"Given, When, Then"</em>) testing
+pattern.</p>
+<p>Sadly, one thing that seems to be missing here is the ability to provide a
+regular expression to match the request URL. We have found this very useful in
+combination with the Angular CLI's environment settings, allowing us to use
+different profiles for local testing and our various deployment environments,
+without the root URLs bleeding into the test setup.</p>
+<p>Instead, you can match just the request method to get access to the
+<code>TestRequest</code>:</p>
+<div class="highlight"><pre><span></span><span class="kr">const</span> <span class="nx">req</span>  <span class="o">=</span> <span class="nx">httpMock</span><span class="p">.</span><span class="nx">expectOne</span><span class="p">({</span> <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;GET&#39;</span> <span class="p">});</span>
+<span class="nx">expect</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">url</span><span class="p">).</span><span class="nx">toMatch</span><span class="p">(</span><span class="sr">/\/people$/</span><span class="p">);</span>
+</pre></div>
+
+
+<p>Also note that the API now uses string representations of the request method
+rather than the enumerator I mentioned in <a href="../2017/Apr/16/async-angular-tests.html"><em>Testing async data in Angular</em></a>;
+<em>"Expected 'GET' to be 'POST'."</em> is a definite improvement over <em>"Expected 0 to
+be 1."</em>, although you don't get the IDE support to autocomplete it.</p>
+<h2>Testing with response data</h2>
+<p>The next test would drive out what happens with the data in the response. As
+the new client parses the JSON for you by default you may not need to do
+anything further, but in this case I want the raw object converted to a class
+with some business logic in it.</p>
+<div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should expose the people as an observable&#39;</span><span class="p">,</span> <span class="nx">done</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">people</span> <span class="o">=</span> <span class="p">[{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Alice&#39;</span><span class="p">,</span> <span class="nx">salary</span>: <span class="kt">12345</span><span class="p">,</span> <span class="nx">cohort</span><span class="o">:</span> <span class="s1">&#39;A&#39;</span> <span class="p">}];</span>
+
+  <span class="nx">backend</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">connection</span>: <span class="kt">MockConnection</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">connection</span><span class="p">.</span><span class="nx">mockRespond</span><span class="p">(</span><span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="k">new</span> <span class="nx">ResponseOptions</span><span class="p">({</span>
+      <span class="nx">status</span>: <span class="kt">200</span><span class="p">,</span>
+      <span class="nx">body</span><span class="o">:</span> <span class="p">{</span> <span class="nx">data</span>: <span class="kt">people</span> <span class="p">},</span>
+    <span class="p">})));</span>
+  <span class="p">});</span>
+
+  <span class="nx">service</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
+
+  <span class="nx">service</span><span class="p">.</span><span class="nx">people$</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">received</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">received</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">([</span><span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">people</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">name</span><span class="p">,</span> <span class="nx">people</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">salary</span><span class="p">,</span> <span class="nx">people</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">cohort</span><span class="p">)]);</span>
+    <span class="nx">done</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>I have generally been avoiding testing the request and the response handling in
+the same method because that leads to having assertions before <em>and</em> after the
+point at which the action is taken, which seems very confusing (<em>"Arrange &amp;
+Assert, Act, Assert Again"</em>?) But with the new API, the assertions all come
+after the action:</p>
+<div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should expose the people as an observable&#39;</span><span class="p">,</span> <span class="nx">done</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">people</span> <span class="o">=</span> <span class="p">[{</span> <span class="nx">name</span><span class="o">:</span> <span class="s1">&#39;Alice&#39;</span><span class="p">,</span> <span class="nx">salary</span>: <span class="kt">12345</span><span class="p">,</span> <span class="nx">cohort</span><span class="o">:</span> <span class="s1">&#39;A&#39;</span> <span class="p">}];</span>
+
+  <span class="nx">service</span><span class="p">.</span><span class="nx">fetch</span><span class="p">();</span>
+
+  <span class="kr">const</span> <span class="nx">req</span> <span class="o">=</span> <span class="nx">httpMock</span><span class="p">.</span><span class="nx">expectOne</span><span class="p">({</span> <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;GET&#39;</span> <span class="p">});</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">url</span><span class="p">).</span><span class="nx">toMatch</span><span class="p">(</span><span class="sr">/\/people$/</span><span class="p">);</span>
+  <span class="nx">req</span><span class="p">.</span><span class="nx">flush</span><span class="p">({</span> <span class="nx">data</span>: <span class="kt">people</span> <span class="p">});</span>
+
+  <span class="nx">service</span><span class="p">.</span><span class="nx">people$</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">received</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">received</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">([</span><span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">people</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">name</span><span class="p">,</span> <span class="nx">people</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">salary</span><span class="p">,</span> <span class="nx">people</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">cohort</span><span class="p">)]);</span>
+    <span class="nx">done</span><span class="p">();</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>Given that some expectation on the request is needed to get access to the
+<code>TestRequest</code> to <code>flush</code> the response data through it, and given that this all
+happens <em>after</em> the service call, it now seems sensible to combine two tests
+into a single one.</p>
+<p>The <code>DoneFn</code> is still required, because I'm exposing the data over an
+observable as discussed in <a href="../2017/Apr/09/async-angular-data.html"><em>Handling data with the Angular AsyncPipe</em></a>, but
+the HTTP part of the test is still handled synchronously. <code>people$</code> has replay
+behaviour in this case, so we can subscribe after the service call and still
+receive the latest data.</p>
+<h2>Testing a POST</h2>
+<p>The in-memory web API also provides create and delete functionality.</p>
+<div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should post a new person to the API&#39;</span><span class="p">,</span> <span class="nx">done</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;Lynn&#39;</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">salary</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">cohort</span> <span class="o">=</span> <span class="s1">&#39;Q&#39;</span><span class="p">;</span>
+
+  <span class="nx">backend</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">((</span><span class="nx">connection</span>: <span class="kt">MockConnection</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">connection</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">url</span><span class="p">).</span><span class="nx">toMatch</span><span class="p">(</span><span class="sr">/\/people$/</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">connection</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">method</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="nx">RequestMethod</span><span class="p">.</span><span class="nx">Post</span><span class="p">,</span> <span class="s1">&#39;expected POST request&#39;</span><span class="p">);</span>
+    <span class="nx">expect</span><span class="p">(</span><span class="nx">connection</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">json</span><span class="p">()).</span><span class="nx">toEqual</span><span class="p">({</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">salary</span><span class="p">,</span> <span class="nx">cohort</span> <span class="p">});</span>
+    <span class="nx">done</span><span class="p">();</span>
+  <span class="p">});</span>
+
+  <span class="nx">service</span><span class="p">.</span><span class="nx">addPerson</span><span class="p">(</span><span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">salary</span><span class="p">,</span> <span class="nx">cohort</span><span class="p">));</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>Converting this to the new testing API is reasonably straightforward again,
+giving the test much clearer structure:</p>
+<div class="highlight"><pre><span></span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should post a new person to the API&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">name</span> <span class="o">=</span> <span class="s1">&#39;Lynn&#39;</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">salary</span> <span class="o">=</span> <span class="mi">123</span><span class="p">;</span>
+  <span class="kd">let</span> <span class="nx">cohort</span> <span class="o">=</span> <span class="s1">&#39;Q&#39;</span><span class="p">;</span>
+
+  <span class="nx">service</span>
+      <span class="p">.</span><span class="nx">addPerson</span><span class="p">(</span><span class="k">new</span> <span class="nx">Person</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">salary</span><span class="p">,</span> <span class="nx">cohort</span><span class="p">))</span>
+      <span class="p">.</span><span class="nx">subscribe</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{});</span>
+
+  <span class="kr">const</span> <span class="nx">req</span> <span class="o">=</span> <span class="nx">httpMock</span><span class="p">.</span><span class="nx">expectOne</span><span class="p">({</span> <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;POST&#39;</span> <span class="p">});</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">url</span><span class="p">).</span><span class="nx">toMatch</span><span class="p">(</span><span class="sr">/\/people$/</span><span class="p">);</span>
+  <span class="nx">expect</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span> <span class="nx">name</span><span class="p">,</span> <span class="nx">salary</span><span class="p">,</span> <span class="nx">cohort</span> <span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
+
+<p>One big gotcha here is that <code>HttpClient.post</code>, unlike <code>Http.post</code>, seems to be
+a <em>cold</em> observable; you need to <code>subscribe</code> for the request to actually take
+place. This may mean refactoring usages of these methods if you aren't already
+returning and subscribing to the request observable.</p>
+<h2>Service implementation</h2>
+<p>For the POSTs and DELETEs not much changed, I just had to replace <code>private
+http: Http</code> with <code>private http: HttpClient</code> and the code continued to work
+perfectly; the generic types on request methods are optional, and if you're not
+dealing with a response you can ignore them completely. Actually using the
+generic types, and with the default JSON unwrapping, the <code>fetch</code> method went
+from:</p>
+<div class="highlight"><pre><span></span><span class="nx">fetch() {</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">http</span>
+      <span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">personRoute</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">response</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">personSubject</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">deserialise</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">().</span><span class="nx">data</span><span class="p">));</span>
+      <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>to:</p>
+<div class="highlight"><pre><span></span><span class="nx">fetch() {</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">httpClient</span>
+      <span class="p">.</span><span class="nx">get</span><span class="o">&lt;</span><span class="p">{</span> <span class="nx">data</span>: <span class="kt">RawPerson</span><span class="p">[]</span> <span class="p">}</span><span class="o">&gt;</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">personRoute</span><span class="p">)</span>
+      <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="nx">json</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">personSubject</span><span class="p">.</span><span class="nx">next</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">deserialise</span><span class="p">(</span><span class="nx">json</span><span class="p">.</span><span class="nx">data</span><span class="p">));</span>
+      <span class="p">});</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>A subtle improvement, but it helps to document your expectations of the API and
+means you get IDE support for the resulting object.</p>
+<h2><code>Http</code> or <code>HttpClient</code>?</h2>
+<p>For new code, adopting the <code>HttpClient</code> is a no-brainer; even <a href="https://angular.io/guide/http">the
+documentation</a> has been switched over. So the big question is, is it worth
+switching an application over to <code>HttpClient</code>? In the application code, the
+switching process is not terribly complicated; anything that doesn't involve
+the response may already work. And if you <em>are</em>, the new API will likely allow
+you to remove a bunch of <code>.json()</code> calls and benefit from better type support.</p>
+<p>The downside is that the new testing API, much as I prefer it to the previous
+system, means a lot of test refactoring. And as much of your code will already
+be working, using a technique like <a href="http://corgibytes.com/blog/2016/09/20/refactoring-against-the-red-bar/"><em>"refactoring against the red bar"</em></a>
+means you may spend a while breaking working code to ensure that the refactored
+tests will fail in a useful way. So, unless you need some of the new
+functionality (the interceptors seem particularly useful), it is probably not
+worth the conversion unless:</p>
+<ul>
+<li>
+<p>you're still in the earlier stages of development, so you're likely to get
+    the benefits in the additional services you write; or</p>
+</li>
+<li>
+<p>you're planning to keep upgrading Angular into v5 (<code>@angular/http</code> is
+    deprecated from <a href="https://github.com/angular/angular/blob/fa6b802be4c79f57aa8484fe47f0c860f1226683/CHANGELOG.md#features">5.0.0-beta.6</a>).</p>
+</li>
+</ul>
+<p>See the full commit switching <code>salary-stats</code> over to the new API <a href="https://github.com/textbook/salary-stats/commit/046cfb059dd1b7e141141ef018a8ee029232221c">here</a>.</p>
+          </div>
+        </article>
+      </aside>
+  <div class="is-hidden-print">
+    <h2 class="subtitle">Other articles</h2>
+    <div class="columns is-multiline">
+        <div class="column is-half-tablet is-one-third-desktop">
+          <div class="card is-fullwidth is-fullheight">
+            <div class="card-content">
+              <a href="../2017/Jul/15/angular-http-client.html">
+                <h3 class="title is-5">New to Angular 4.3: HttpClient</h3>
+                <div class="heading subtitle">Sat 15 July 2017</div>
+                <div><p>The latest version of Angular includes a new HTTP client, with a new API.</p></div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-third-desktop">
+          <div class="card is-fullwidth is-fullheight">
+            <div class="card-content">
+              <a href="../2017/May/29/angular-ng-template-outlet.html">
+                <h3 class="title is-5">ngTemplateOutlet tricks</h3>
+                <div class="heading subtitle">Mon 29 May 2017</div>
+                <div><p>Using an Angular ngTemplateOutlet to bind child content from the parent template.</p></div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-third-desktop">
+          <div class="card is-fullwidth is-fullheight">
+            <div class="card-content">
+              <a href="../2017/May/20/angular-ng-elements.html">
+                <h3 class="title is-5">Angular's "ng-" elements</h3>
+                <div class="heading subtitle">Sat 20 May 2017</div>
+                <div><p>A quick spotters' guide to some of the "ng-" elements that Angular provides.</p></div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-third-desktop">
+          <div class="card is-fullwidth is-fullheight">
+            <div class="card-content">
+              <a href="../2017/Apr/16/async-angular-tests.html">
+                <h3 class="title is-5">Testing async data in Angular</h3>
+                <div class="heading subtitle">Sun 16 April 2017</div>
+                <div><p>Using the Angular TestBed to test asynchronous API data manipulation.</p></div>
+              </a>
+            </div>
+          </div>
+        </div>
+    </div>
+<nav class="pagination is-centered">
+    <a class="pagination-previous" href="#" disabled>
+      Previous
+    </a>
+    <a class="pagination-next"
+       href="../tag/angular2.html">
+      Next page
+    </a>
+  <ul class="pagination-list">
+    <li>Page 1 / 2</li>
+  </ul>
+</nav>
+<br>  </div>
+    </div>
+
+    <div class="column is-one-quarter-desktop is-one-third-tablet is-hidden-print">
+      <aside class="menu">
+<div id="mc_embed_signup">
+  <form
+      action="https://jonrshar.us15.list-manage.com/subscribe/post?u=7ada11180797f3af73228bf0b&amp;id=d172abcbd2"
+      method="post" id="mc-embedded-subscribe-form"
+      name="mc-embedded-subscribe-form" class="validate" target="_blank"
+      novalidate>
+
+    <h2 class="menu-label">Mailing List</h2>
+
+    <div id="mc_embed_signup_scroll">
+      <div class="field mc-field-group">
+        <label for="mce-EMAIL" class="label is-small">Email</label>
+        <div class="field-body">
+          <div class="field">
+            <p class="control has-icons-left">
+              <input type="email" name="EMAIL" class="input required email is-small"
+                     id="mce-EMAIL" placeholder="Email address">
+              <span class="icon is-small is-left">
+              <i class="fa fa-envelope"></i>
+            </span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="mce-FNAME" class="label is-small">Name</label>
+        <div class="field-body">
+          <div class="field is-grouped">
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="FNAME"
+                     id="mce-FNAME" placeholder="First">
+            </p>
+            <p class="control is-expanded">
+              <input class="input is-small" type="text" value="" name="LNAME"
+                     id="mce-LNAME" placeholder="Last">
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="field is-grouped">
+        <p class="control">
+          <input type="submit" name="subscribe" value="Subscribe"
+                 class="button is-small is-success" id="mc-embedded-subscribe">
+        </p>
+          <p class="control">
+            <span class="help">
+              Powered by
+              <a href="http://eepurl.com/cNv6Rb"
+                 title="MailChimp - email marketing made easy and fun">
+                MailChimp
+              </a>
+            </span>
+          </p>
+      </div>
+
+      <div id="mce-responses" class="clear">
+        <div class="response help is-danger" id="mce-error-response"
+             style="display:none"></div>
+        <div class="response help is-success" id="mce-success-response"
+             style="display:none"></div>
+      </div>
+
+      <div style="position: absolute; left: -5000px;" aria-hidden="true">
+        <input type="text" name="b_7ada11180797f3af73228bf0b_d172abcbd2"
+               tabindex="-1" value="">
+      </div>
+    </div>
+  </form>
+</div>
+
+          <p class="menu-label">Other Pages</p>
+          <ul class="menu-list">
+                <li><a                        href="../pages/about.html">
+                  <span class="icon is-small"><i class="fa fa-book"></i></span>
+                  <span class="link-text">About</span>
+                </a></li>
+          </ul>
+          <p class="menu-label">Links</p>
+          <ul class="menu-list">
+              <li><a href="http://engineering.pivotal.io/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Pivotal Engineering Journal</span>
+              </a></li>
+              <li><a href="http://blog.cleancoder.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">The Clean Code Blog</span>
+              </a></li>
+              <li><a href="https://codeascraft.com/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Code as Craft</span>
+              </a></li>
+              <li><a href="http://corgibytes.com/blog/">
+                <span class="icon is-small"><i class="fa fa-globe fa-fw"></i></span>
+                <span class="link-text">Corgibytes Blog</span>
+              </a></li>
+          </ul>
+<p class="menu-label">Social</p>
+<ul class="menu-list">
+    <li><a href="https://github.com/textbook">
+      <span class="icon is-small">
+          <i class="fa fa-github fa-fw"></i>
+      </span>
+      <span class="link-text">GitHub</span>
+    </a></li>
+    <li><a href="http://stackoverflow.com/users/3001761/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-stack-overflow fa-fw"></i>
+      </span>
+      <span class="link-text">Stack Overflow</span>
+    </a></li>
+    <li><a href="https://twitter.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-twitter fa-fw"></i>
+      </span>
+      <span class="link-text">Twitter</span>
+    </a></li>
+    <li><a href="https://500px.com/jonrsharpe">
+      <span class="icon is-small">
+          <i class="fa fa-500px fa-fw"></i>
+      </span>
+      <span class="link-text">500px</span>
+    </a></li>
+
+
+</ul>          <p class="menu-label">License</p>
+          
+<ul class="menu-list">
+  <li>
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      <span class="icon is-small">
+        <i class="fa fa-creative-commons fa-fw"></i>
+      </span>
+      <span>CC BY-SA 4.0</span>
+    </a>
+  </li>
+</ul>
+
+      </aside>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container has-text-centered">
+ <p class="subtitle">These are my opinions - if you don't like them, I have others</p>    <div class="credits">
+      <span><a href="https://github.com/textbook/bulrush">Bulrush</a> theme for
+        <a href="https://blog.getpelican.com/">Pelican</a></span>
+      <span><span class="icon is-small"><i class="fa fa-html5"></i></span> HTML 5</span>
+      <span><span class="icon is-small"><i class="fa fa-css3"></i></span> CSS 3</span>
+      <span>Made with <a href="https://bulma.io">Bulma</a></span>
+    </div>
+  </div>
+  <div class="github-fork-ribbon-wrapper is-hidden-mobile is-hidden-print">
+    <div class="github-fork-ribbon">
+      <a href="https://github.com/textbook/textbook.github.io-source">
+        <i class="fa fa-github fa-fw"></i>
+        Fork me on GitHub
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script type="text/javascript">
+  document.getElementById('navToggle').addEventListener('click', function () {
+    var nav = document.getElementById('navMenu');
+    var className = nav.getAttribute('class');
+    if (className == 'navbar-menu') {
+      nav.className = 'navbar-menu is-active';
+    } else {
+      nav.className = 'navbar-menu';
+    }
+  });
+</script>
+</body>
+</html>
